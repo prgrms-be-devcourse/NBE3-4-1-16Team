@@ -1,4 +1,4 @@
-package team16.spring_project1.domain.order.Service.order;
+package team16.spring_project1.domain.order.Service;
 
 
 import org.springframework.stereotype.Service;
@@ -82,6 +82,11 @@ public class OrderService {
         orderRepository.deleteById(id);
     }
 
+    @Transactional
+    public void deleteAll() {
+        orderRepository.deleteAll();
+    }
+
     public long count() {
         return orderRepository.count();
     }
@@ -110,4 +115,5 @@ public class OrderService {
                 item.getModifyDate()
         );
     }
+
 }

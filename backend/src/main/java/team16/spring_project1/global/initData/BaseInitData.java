@@ -1,5 +1,6 @@
 package team16.spring_project1.global.initData;
 
+import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -9,10 +10,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Transactional;
 import team16.spring_project1.domain.order.Entity.Order;
 import team16.spring_project1.domain.order.Entity.OrderItem;
+import team16.spring_project1.domain.order.Service.OrderService;
 import team16.spring_project1.domain.product.product.Service.ProductService;
 import team16.spring_project1.domain.product.product.entity.Product;
 import team16.spring_project1.global.enums.DeliveryStatus;
-import team16.spring_project1.domain.order.Service.order.OrderService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,10 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class BaseInitData {
+
     private final ProductService productService;
     private final OrderService orderService;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Autowired
     @Lazy
@@ -66,12 +69,10 @@ public class BaseInitData {
 
     @Transactional
     public void work2() {
-        if (orderService.count() > 0){
-            return;
-        }
+        if(orderService.count() > 0) return;
 
         for (int i = 1; i <= 3; i++) {
-            Order order = createOrder(1);
+            Order order = createOrder(i);
             orderService.createOrder(order);
         }
     }
@@ -85,8 +86,8 @@ public class BaseInitData {
         for (int j = 1; j <= 2; j++) {
             OrderItem item = new OrderItem();
             item.setProductName("Item " + i + "-" + j);
-            item.setPrice(i * 500);
-            item.setCount((int) (Math.random() * 5) + 1);   // 1 ~ 5
+            item.setPrice(500);
+            item.setCount(2);
             item.setOrder(order);
             orderItems.add(item);
         }
@@ -100,4 +101,5 @@ public class BaseInitData {
         order.setOrderItems(orderItems);
         return order;
     }
+
 }

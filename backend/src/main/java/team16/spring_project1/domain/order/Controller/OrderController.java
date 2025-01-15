@@ -3,31 +3,29 @@ package team16.spring_project1.domain.order.Controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team16.spring_project1.domain.order.DTO.response.OrderResponseDTO;
 import team16.spring_project1.domain.order.Entity.Order;
+import team16.spring_project1.domain.order.Service.OrderService;
+import team16.spring_project1.global.apiResponse.ApiResponse;
 import team16.spring_project1.global.enums.DeliveryStatus;
-import team16.spring_project1.domain.order.Service.order.OrderService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/order")
+@RequiredArgsConstructor
 @Tag(name = "Order Management", description = "주문 관리 API")
 public class OrderController {
     private final OrderService orderService;
 
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
-
     @Operation(summary = "Create Order", description = "새로운 주문을 생성합니다.")
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Order createdOrder = orderService.createOrder(order);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
+    public ResponseEntity<ApiResponse<Order>> createOrder(@RequestBody Order order) {
+        Order savedOrder = orderService.createOrder(order);
+        return ResponseEntity.ok(ApiResponse.success(savedOrder));
     }
 
     @Operation(summary = "Get All Orders", description = "모든 주문 목록을 가져옵니다.")
