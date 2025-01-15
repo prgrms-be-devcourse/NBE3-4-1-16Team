@@ -1,4 +1,4 @@
-package team16.spring_project1.domain.order;
+package team16.spring_project1.domain.order.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;

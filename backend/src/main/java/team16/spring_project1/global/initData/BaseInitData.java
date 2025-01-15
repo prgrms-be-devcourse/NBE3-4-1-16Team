@@ -1,26 +1,24 @@
 package team16.spring_project1.global.initData;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Transactional;
-import team16.spring_project1.domain.order.Order;
-import team16.spring_project1.domain.order.OrderItem;
+import team16.spring_project1.domain.order.Entity.Order;
+import team16.spring_project1.domain.order.Entity.OrderItem;
 import team16.spring_project1.domain.product.product.Service.ProductService;
 import team16.spring_project1.domain.product.product.entity.Product;
 import team16.spring_project1.global.enums.DeliveryStatus;
-import team16.spring_project1.service.order.OrderService;
+import team16.spring_project1.domain.order.Service.order.OrderService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-@Slf4j
 public class BaseInitData {
     private final ProductService productService;
     private final OrderService orderService;
@@ -68,7 +66,10 @@ public class BaseInitData {
 
     @Transactional
     public void work2() {
-        log.debug("BaseInitData work2() 실행");
+        if (orderService.count() > 0){
+            return;
+        }
+
         for (int i = 1; i <= 3; i++) {
             Order order = createOrder(1);
             orderService.createOrder(order);

@@ -1,14 +1,14 @@
-package team16.spring_project1.service.order;
+package team16.spring_project1.domain.order.Service.order;
 
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team16.spring_project1.domain.order.Order;
-import team16.spring_project1.domain.order.OrderItem;
-import team16.spring_project1.dto.order.response.OrderItemResponseDTO;
-import team16.spring_project1.dto.order.response.OrderResponseDTO;
+import team16.spring_project1.domain.order.Entity.Order;
+import team16.spring_project1.domain.order.Entity.OrderItem;
+import team16.spring_project1.domain.order.DTO.response.OrderItemResponseDTO;
+import team16.spring_project1.domain.order.DTO.response.OrderResponseDTO;
 import team16.spring_project1.global.enums.DeliveryStatus;
-import team16.spring_project1.repository.order.OrderRepository;
+import team16.spring_project1.domain.order.Repository.OrderRepository;
 
 import java.util.List;
 
@@ -82,6 +82,10 @@ public class OrderService {
         orderRepository.deleteById(id);
     }
 
+    public long count() {
+        return orderRepository.count();
+    }
+
     private OrderResponseDTO toOrderResponseDTO(Order order) {
         return new OrderResponseDTO(
                 order.getId(),
@@ -106,5 +110,4 @@ public class OrderService {
                 item.getModifyDate()
         );
     }
-
 }

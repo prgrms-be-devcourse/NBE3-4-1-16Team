@@ -1,4 +1,4 @@
-package team16.spring_project1.domain.order;
+package team16.spring_project1.domain.order.Entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;

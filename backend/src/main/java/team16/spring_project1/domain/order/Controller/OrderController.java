@@ -1,4 +1,4 @@
-package team16.spring_project1.controller.order;
+package team16.spring_project1.domain.order.Controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team16.spring_project1.dto.order.response.OrderResponseDTO;
-import team16.spring_project1.domain.order.Order;
+import team16.spring_project1.domain.order.DTO.response.OrderResponseDTO;
+import team16.spring_project1.domain.order.Entity.Order;
 import team16.spring_project1.global.enums.DeliveryStatus;
-import team16.spring_project1.service.order.OrderService;
+import team16.spring_project1.domain.order.Service.order.OrderService;
 
 import java.util.List;
 
