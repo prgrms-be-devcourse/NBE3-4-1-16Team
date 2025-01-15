@@ -11,6 +11,7 @@ import team16.spring_project1.global.jpa.entity.BaseTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product extends BaseTime {
+    //test
     private String productName;
     private int price;
     private String imageUrl;
