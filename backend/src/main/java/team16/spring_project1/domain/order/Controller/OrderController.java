@@ -19,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Order Management", description = "주문 관리 API")
 public class OrderController {
+
     private final OrderService orderService;
 
     @Operation(summary = "Create Order", description = "새로운 주문을 생성합니다.")
@@ -30,37 +31,42 @@ public class OrderController {
 
     @Operation(summary = "Get All Orders", description = "모든 주문 목록을 가져옵니다.")
     @GetMapping
-    public ResponseEntity<List<OrderResponseDTO>> getAllOrder() {
+    public ResponseEntity<ApiResponse<List<OrderResponseDTO>>> getAllOrder() {
         List<OrderResponseDTO> orders = orderService.getAllOrderDTO();
-        return ResponseEntity.ok(orders);
+        return ResponseEntity.ok(ApiResponse.success(orders));
     }
 
     @Operation(summary = "Get Orders by Email", description = "이메일을 기준으로 주문 목록을 가져옵니다.")
     @GetMapping("/by-email")
-    public ResponseEntity<List<OrderResponseDTO>> getOrdersByEmail(@RequestParam String email) {
+    public ResponseEntity<ApiResponse<List<OrderResponseDTO>>> getOrdersByEmail(@RequestParam String email) {
         List<OrderResponseDTO> orders = orderService.getOrdersDTOByEmail(email);
-        return ResponseEntity.ok(orders);
+        return ResponseEntity.ok(ApiResponse.success(orders));
     }
 
     @Operation(summary = "Get Order by ID", description = "주문 ID를 기준으로 특정 주문을 가져옵니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponseDTO> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<OrderResponseDTO>> getOrderById(@PathVariable Long id) {
         OrderResponseDTO order = orderService.getOrderDTOById(id);
-        return ResponseEntity.ok(order);
+        return ResponseEntity.ok(ApiResponse.success(order));
     }
 
     @Operation(summary = "Update Order Status", description = "주문 상태를 업데이트합니다.")
     @PutMapping("/{id}/status")
-    public ResponseEntity<OrderResponseDTO> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
+    public ResponseEntity<ApiResponse<OrderResponseDTO>> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
         DeliveryStatus deliveryStatus = DeliveryStatus.valueOf(status.toUpperCase());
         OrderResponseDTO updatedOrder = orderService.updateOrderStatus(id, deliveryStatus);
-        return ResponseEntity.ok(updatedOrder);
+        return ResponseEntity.ok(ApiResponse.success(updatedOrder));
     }
 
     @Operation(summary = "Delete Order", description = "주문을 삭제합니다.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
-        orderService.deleteOrder(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse<String>> deleteOrder(@PathVariable Long id) {
+        boolean exist = orderService.deleteOrder(id);
+
+        if (!exist) {
+            return ResponseEntity.ok(ApiResponse.success("주문이 성공적으로 삭제되었습니다."));
+        } else {
+            return ResponseEntity.ok(ApiResponse.failure("해당 주문은 이미 삭제되었거나 존재하지 않습니다."));
+        }
     }
 }

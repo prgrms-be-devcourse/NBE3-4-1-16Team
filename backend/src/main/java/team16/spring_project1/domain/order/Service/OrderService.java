@@ -3,12 +3,12 @@ package team16.spring_project1.domain.order.Service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team16.spring_project1.domain.order.Entity.Order;
-import team16.spring_project1.domain.order.Entity.OrderItem;
 import team16.spring_project1.domain.order.DTO.response.OrderItemResponseDTO;
 import team16.spring_project1.domain.order.DTO.response.OrderResponseDTO;
-import team16.spring_project1.global.enums.DeliveryStatus;
+import team16.spring_project1.domain.order.Entity.Order;
+import team16.spring_project1.domain.order.Entity.OrderItem;
 import team16.spring_project1.domain.order.Repository.OrderRepository;
+import team16.spring_project1.global.enums.DeliveryStatus;
 
 import java.util.List;
 
@@ -78,13 +78,10 @@ public class OrderService {
     }
 
     @Transactional
-    public void deleteOrder(Long id) {
+    public boolean deleteOrder(Long id) {
         orderRepository.deleteById(id);
-    }
 
-    @Transactional
-    public void deleteAll() {
-        orderRepository.deleteAll();
+        return orderRepository.existsById(id);
     }
 
     public long count() {
