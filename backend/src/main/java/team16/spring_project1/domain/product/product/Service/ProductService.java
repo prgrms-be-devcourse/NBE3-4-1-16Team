@@ -29,7 +29,7 @@ public class ProductService {
         return product;
     }
 
-    public Product create(String productName,String category, int price, String imageUrl) {
+    public Product create(String productName,String category, String price, String imageUrl) {
         Product product = new Product();
         product.setProductName(productName);
         product.setCategory(category);
@@ -41,9 +41,6 @@ public class ProductService {
 
     @Transactional
     public Product modify(Product product,ProductRequest productRequest){
-        if (product == null) {
-            return null;
-        }
         product.setProductName(productRequest.getProductName());
         product.setCategory(productRequest.getCategory());
         product.setPrice(productRequest.getPrice());
