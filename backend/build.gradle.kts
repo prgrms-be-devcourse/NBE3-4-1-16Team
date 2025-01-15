@@ -27,9 +27,6 @@ dependencies {
 	// Spring Data JPA
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
-	// Spring Security
-	implementation("org.springframework.boot:spring-boot-starter-security")
-
 	// Validation
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 
@@ -49,13 +46,12 @@ dependencies {
 	// Spring Boot Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-	// Spring Security Test
-	testImplementation("org.springframework.security:spring-security-test")
-
 	// JUnit Platform Launcher
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
 
+	// Springdoc OpenAPI for Swagger UI
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+}
 
 tasks.withType<Test> {
 	useJUnitPlatform()
