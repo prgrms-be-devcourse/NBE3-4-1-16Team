@@ -31,6 +31,7 @@ public class ProductService {
         this.productRepository.save(product);
         return product;
     }
+
     @Transactional
     public Product modify(String modifyProductName,String productName, String category, int price, String imageUrl){
         Optional<Product> _product = this.productRepository.findByProductName(modifyProductName);
