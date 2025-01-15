@@ -1,3 +1,3 @@
-rootProject.name = "NBE3-4-1-16Team"
+rootProject.name = "spring-project1"
 include("backend")
 include("frontend")
