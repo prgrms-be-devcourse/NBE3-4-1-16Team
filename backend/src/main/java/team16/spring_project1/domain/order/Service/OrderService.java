@@ -30,6 +30,16 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    @Transactional
+    public OrderResponseDTO createOrderDTO(Order order) {
+
+        for (OrderItem item : order.getOrderItems()) {
+            item.setOrder(order);
+        }
+
+        return toOrderResponseDTO(orderRepository.save(order));
+    }
+
     @Transactional(readOnly = true)
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
