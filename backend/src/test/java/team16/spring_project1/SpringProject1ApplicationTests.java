@@ -10,4 +10,9 @@ class SpringProject1ApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void t3(){
+
+	}
+
 }
