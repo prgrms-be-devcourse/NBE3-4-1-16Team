@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import team16.spring_project1.domain.product.product.Repository.ProductRepository;
 import team16.spring_project1.domain.product.product.entity.Product;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -47,5 +48,13 @@ public class ProductService {
 
     public long count() {
         return productRepository.count();
+    }
+
+    public Optional<Product> findLatest() {
+        return productRepository.findFirstByOrderByIdDesc();
+    }
+
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 }
