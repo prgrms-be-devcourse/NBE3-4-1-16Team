@@ -25,8 +25,8 @@ public class OrderController {
 
     @Operation(summary = "Create Order", description = "새로운 주문을 생성합니다.")
     @PostMapping
-    public ResponseEntity<ApiResponse<Order>> createOrder(@RequestBody Order order) {
-        Order savedOrder = orderService.createOrder(order);
+    public ResponseEntity<ApiResponse<OrderResponseDTO>> createOrder(@RequestBody Order order) {
+        OrderResponseDTO savedOrder = orderService.createOrderDTO(order);
         return ResponseEntity.ok(ApiResponse.success(savedOrder));
     }
 
