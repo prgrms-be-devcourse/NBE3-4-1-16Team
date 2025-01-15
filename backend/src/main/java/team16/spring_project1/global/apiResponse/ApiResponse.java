@@ -1,6 +1,11 @@
 package team16.spring_project1.global.apiResponse;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Collections;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,6 +37,11 @@ public class ApiResponse<Content> {
         }
 
         public ApiResponse<Content> build() {
+
+            if (content == null) {
+                content = createEmptyContent();
+            }
+
             return new ApiResponse<>(success, message, content);
         }
     }
@@ -44,7 +54,15 @@ public class ApiResponse<Content> {
         return ApiResponse.<Content>builder()
                 .success(true)
                 .message("요청이 성공했습니다.")
-                .content(content)
+                .content(getContent(content))
+                .build();
+    }
+
+    public static <Content> ApiResponse<Content> success(String message) {
+        return ApiResponse.<Content>builder()
+                .success(true)
+                .message(message)
+                .content(createEmptyContent())
                 .build();
     }
 
@@ -52,7 +70,7 @@ public class ApiResponse<Content> {
         return ApiResponse.<Content>builder()
                 .success(true)
                 .message(message)
-                .content(content)
+                .content(getContent(content))
                 .build();
     }
 
@@ -61,7 +79,7 @@ public class ApiResponse<Content> {
         return ApiResponse.<Content>builder()
                 .success(false)
                 .message("요청에 실패하였습니다.")
-                .content(null)
+                .content(createEmptyContent())
                 .build();
     }
 
@@ -69,7 +87,7 @@ public class ApiResponse<Content> {
         return ApiResponse.<Content>builder()
                 .success(false)
                 .message(message)
-                .content(null)
+                .content(createEmptyContent())
                 .build();
     }
 
@@ -77,7 +95,16 @@ public class ApiResponse<Content> {
         return ApiResponse.<Content>builder()
                 .success(false)
                 .message(message)
-                .content(content)
+                .content(getContent(content))
                 .build();
+    }
+
+    private static <Content> Content getContent(Content content) {
+        return content == null ? createEmptyContent() : content;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <Content> Content createEmptyContent() {
+        return (Content) Collections.emptyList();
     }
 }
