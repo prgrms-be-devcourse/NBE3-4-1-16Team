@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import team16.spring_project1.domain.product.product.DTO.RestResponse;
+import team16.spring_project1.domain.product.product.DTO.ProductRequest;
 import team16.spring_project1.domain.product.product.Service.ProductService;
 import team16.spring_project1.domain.product.product.entity.Product;
 
@@ -97,17 +97,47 @@ public class ProductControllerTest {
     @Test
     @DisplayName("상품 수정")
     void t3() throws Exception {
-        RestResponse restResponse = new RestResponse().builder()
+        ProductRequest restResponse = new ProductRequest().builder()
                 .productName("수정된 커피콩")
                 .imageUrl("/")
                 .category("수정된커피콩")
                 .price(9999)
                 .build();
-        mvc.perform(put("/products/원두커피 베트남 로부스타 G1 1kg 커피창고 고소한 맛있는 홀빈 콩")
+        mvc.perform(put("/products/1")
                         .flashAttr("RestResponse", restResponse))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("성공"));
 
 
+    }
+
+    @Test
+    @DisplayName("상품 단건 조회")
+    void t4() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(get("/products/1"))
+                .andDo(print());
+
+        Product product = productService.findById(1).get();
+
+        resultActions
+                .andExpect(handler().handlerType(ProductController.class))
+                .andExpect(handler().methodName("item"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(product.getId()))
+                .andExpect(jsonPath("$.createDate").value(Matchers.startsWith(product.getCreateDate().toString().substring(0, 23))))
+                .andExpect(jsonPath("$.modifyDate").value(Matchers.startsWith(product.getModifyDate().toString().substring(0, 23))))
+                .andExpect(jsonPath("$.productName").value(product.getProductName()))
+                .andExpect(jsonPath("$.price").value(product.getPrice()))
+                .andExpect(jsonPath("$.imageUrl").value(product.getImageUrl()))
+                .andExpect(jsonPath("$.category").value(product.getCategory()));
+    }
+    @Test
+    @DisplayName("상품 삭제")
+    void t5() throws Exception {
+
+        mvc.perform(put("/products/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("성공"));
     }
 }

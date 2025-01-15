@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import team16.spring_project1.domain.order.Entity.Order;
 import team16.spring_project1.domain.order.Entity.OrderItem;
 import team16.spring_project1.domain.order.Service.OrderService;
+import team16.spring_project1.domain.product.product.DTO.ProductRequest;
 import team16.spring_project1.domain.product.product.Service.ProductService;
 import team16.spring_project1.domain.product.product.entity.Product;
 import team16.spring_project1.global.enums.DeliveryStatus;

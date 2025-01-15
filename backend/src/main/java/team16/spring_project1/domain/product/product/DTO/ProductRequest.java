@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestResponse {
+public class ProductRequest{
     private String productName;
     private String category;
     private int price;
