@@ -1,7 +1,7 @@
 package team16.spring_project1.global.initData;
 
-import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -15,16 +15,21 @@ import team16.spring_project1.domain.product.product.Service.ProductService;
 import team16.spring_project1.domain.product.product.entity.Product;
 import team16.spring_project1.global.enums.DeliveryStatus;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class BaseInitData {
 
     private final ProductService productService;
     private final OrderService orderService;
-    private final EntityManagerFactory entityManagerFactory;
+
+    private static final int ORDER_COUNT = 3;
+    private static final int ITEM_PRICE = 500;
+    private static final int ITEM_COUNT = 2;
 
     @Autowired
     @Lazy
@@ -69,28 +74,25 @@ public class BaseInitData {
 
     @Transactional
     public void work2() {
-        if(orderService.count() > 0) return;
+        if (orderService.count() > 0) return;
 
-        for (int i = 1; i <= 3; i++) {
-            Order order = createOrder(i);
-            orderService.createOrder(order);
-        }
+        IntStream.rangeClosed(1, ORDER_COUNT)
+                .mapToObj(this::generateDummyOrder)
+                .forEach(orderService::createOrder);
     }
 
-    private static Order createOrder(int i) {
+    /**
+     * 테스트용 Order 객체를 생성하는 메서드입니다.
+     *
+     * @param orderIndex Order 객체의 식별자 역할을 하는 숫자로, 이메일 주소와 OrderItem의 이름에 사용됩니다.
+     * @return 가공된 Order 객체
+     */
+    private Order generateDummyOrder(int orderIndex) {
         Order order = new Order();
-        order.setEmail("user" + i + "@example.com");
+        order.setEmail("user" + orderIndex + "@example.com");
         order.setStatus(DeliveryStatus.PAYMENT_COMPLETED);
-        List<OrderItem> orderItems = new ArrayList<>();
 
-        for (int j = 1; j <= 2; j++) {
-            OrderItem item = new OrderItem();
-            item.setProductName("Item " + i + "-" + j);
-            item.setPrice(500);
-            item.setCount(2);
-            item.setOrder(order);
-            orderItems.add(item);
-        }
+        List<OrderItem> orderItems = generateDummyOrderItems(orderIndex, order);
 
         // 총 가격 계산
         int totalPrice = orderItems.stream()
@@ -100,6 +102,28 @@ public class BaseInitData {
         order.setTotalPrice(totalPrice);
         order.setOrderItems(orderItems);
         return order;
+    }
+
+    /**
+     * 테스트용 OrderItems 객체를 생성하는 메서드입니다.
+     * @param orderIndex orderItem의 이름 구별에 사용됩니다.
+     * @param order orderItem의 ID 에 사용됩니다.
+     * @return 가공된 orderItem 객체
+     */
+    @SuppressWarnings("all")
+    private static List<OrderItem> generateDummyOrderItems(int orderIndex, Order order) {
+        List<OrderItem> orderItems = IntStream.rangeClosed(1, 2)
+                .mapToObj(itemIndex -> {
+                    OrderItem item = new OrderItem();
+                    item.setProductName("Item " + orderIndex + "-" + itemIndex);
+                    item.setPrice(ITEM_PRICE);
+                    item.setCount(ITEM_COUNT);
+                    item.setOrder(order);
+                    return item;
+                })
+                .collect(Collectors.toList());
+
+        return orderItems;
     }
 
 }

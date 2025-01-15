@@ -2,6 +2,7 @@ package team16.spring_project1.domain.order.Controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/order")
 @RequiredArgsConstructor
-@Tag(name = "Order Management", description = "주문 관리 API")
+@Tag(name = "Order Controller", description = "주문 관리 REST API")
 public class OrderController {
 
     private final OrderService orderService;
@@ -52,7 +53,13 @@ public class OrderController {
 
     @Operation(summary = "Update Order Status", description = "주문 상태를 업데이트합니다.")
     @PutMapping("/{id}/status")
-    public ResponseEntity<ApiResponse<OrderResponseDTO>> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
+    public ResponseEntity<ApiResponse<OrderResponseDTO>> updateOrderStatus(
+            @PathVariable Long id,
+            @Parameter(
+                    description = "주문 상태 (가능한 값: PAYMENT_COMPLETED, PREPARING, SHIPPING, COMPLETED)",
+                    example = "PAYMENT_COMPLETED"
+            )
+            @RequestParam String status) {
         DeliveryStatus deliveryStatus = DeliveryStatus.valueOf(status.toUpperCase());
         OrderResponseDTO updatedOrder = orderService.updateOrderStatus(id, deliveryStatus);
         return ResponseEntity.ok(ApiResponse.success(updatedOrder));
