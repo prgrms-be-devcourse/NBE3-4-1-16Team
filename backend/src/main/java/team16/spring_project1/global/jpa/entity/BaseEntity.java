@@ -1,5 +1,6 @@
 package team16.spring_project1.global.jpa.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
@@ -14,9 +15,12 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @MappedSuperclass
 public class BaseEntity {
+
     @Id
     @GeneratedValue(strategy = IDENTITY) // AUTO_INCREMENT
     @Setter(AccessLevel.PROTECTED)
     @EqualsAndHashCode.Include
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
+
 }

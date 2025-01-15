@@ -24,17 +24,33 @@ repositories {
 }
 
 dependencies {
+	// Spring Data JPA
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	//implementation("org.springframework.boot:spring-boot-starter-security")
+
+	// Validation
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+
+	// Spring Web
 	implementation("org.springframework.boot:spring-boot-starter-web")
+
+	// Lombok
 	compileOnly("org.projectlombok:lombok")
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	runtimeOnly("com.h2database:h2")
 	annotationProcessor("org.projectlombok:lombok")
+
+	// Spring DevTools
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+	// H2 Database
+	runtimeOnly("com.h2database:h2")
+
+	// Spring Boot Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	//testImplementation("org.springframework.security:spring-security-test")
+
+	// JUnit Platform Launcher
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	// Springdoc OpenAPI for Swagger UI
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 }
 
 tasks.withType<Test> {
