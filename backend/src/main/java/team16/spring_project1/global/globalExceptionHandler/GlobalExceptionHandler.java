@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 @Hidden
 @RequiredArgsConstructor
+@Hidden
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

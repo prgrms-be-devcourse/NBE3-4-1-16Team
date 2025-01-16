@@ -29,7 +29,7 @@ public class ProductService {
         return product;
     }
 
-    public Product create(String productName,String category, String price, String imageUrl) {
+    public Product create(String productName,String category, int price, String imageUrl) {
         Product product = new Product();
         product.setProductName(productName);
         product.setCategory(category);

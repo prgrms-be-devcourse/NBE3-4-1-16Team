@@ -13,7 +13,7 @@ import team16.spring_project1.global.jpa.entity.BaseTime;
 public class Product extends BaseTime {
     //test
     private String productName;
-    private String price;
+    private int price;
     private String imageUrl;
     private String category;
 }
