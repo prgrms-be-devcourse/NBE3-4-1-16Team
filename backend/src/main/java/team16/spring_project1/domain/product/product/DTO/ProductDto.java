@@ -11,7 +11,7 @@ public class ProductDto {
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
     private String productName;
-    private int price;
+    private String price;
     private String imageUrl;
     private String category;
 

@@ -1,5 +1,6 @@
 package team16.spring_project1.domain.product.product.DTO;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestResponse {
+public class ProductRequest{
+    @NotBlank
     private String productName;
+    @NotBlank
     private String category;
-    private int price;
+    @NotBlank
+    private String price;
     private String imageUrl;
 }
