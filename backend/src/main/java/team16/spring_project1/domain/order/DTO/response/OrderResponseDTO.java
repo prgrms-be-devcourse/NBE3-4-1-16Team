@@ -1,4 +1,4 @@
-package team16.spring_project1.dto.order.response;
+package team16.spring_project1.domain.order.DTO.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,4 +11,8 @@ public record OrderResponseDTO(
     LocalDateTime createdAt,
     LocalDateTime modifiedAt,
     List<OrderItemResponseDTO> orderItems
-) {}
+) {
+    public boolean isEmpty() {
+        return this.id == null;
+    }
+}

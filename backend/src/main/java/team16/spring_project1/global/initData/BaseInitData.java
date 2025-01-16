@@ -1,79 +1,129 @@
 package team16.spring_project1.global.initData;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import team16.spring_project1.domain.order.Order;
-import team16.spring_project1.domain.order.OrderItem;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.transaction.annotation.Transactional;
+import team16.spring_project1.domain.order.Entity.Order;
+import team16.spring_project1.domain.order.Entity.OrderItem;
+import team16.spring_project1.domain.order.Service.OrderService;
+import team16.spring_project1.domain.product.product.Service.ProductService;
+import team16.spring_project1.domain.product.product.entity.Product;
 import team16.spring_project1.global.enums.DeliveryStatus;
-import team16.spring_project1.repository.order.OrderRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Configuration
 @RequiredArgsConstructor
-@Profile("!prod") // prod 환경일시 비활성화
 @Slf4j
 public class BaseInitData {
 
-    private final OrderRepository orderRepository;
+    private final ProductService productService;
+    private final OrderService orderService;
 
-    @PreDestroy
-    public void clearDataOnShutdown() {
-        log.info("모든 데이터 삭제");
-        orderRepository.deleteAll(); // 모든 데이터 삭제
+    private static final int ORDER_COUNT = 3;
+    private static final int ITEM_PRICE = 500;
+    private static final int ITEM_COUNT = 2;
+
+    @Autowired
+    @Lazy
+    private BaseInitData self;
+
+    @Bean
+    public ApplicationRunner baseInitDataApplicationRunner() {
+        return args -> {
+            self.work1();
+            self.work2();
+        };
     }
 
-    @PostConstruct
-    public void init() {
-        log.info("Order 테스트 데이터 생성 ");
-
-        if (orderRepository.count() > 0) {
-            return;
-        }
-
-        // Order 5개 생성
-        for (int i = 1; i <= 5; i++) {
-            Order order = new Order();
-            order.setEmail("user" + i + "@example.com");
-            order.setStatus(DeliveryStatus.PAYMENT_COMPLETED);
-
-            // OrderItems 무작위 생성 (1 ~ 3개)
-            int itemCount = (int) (Math.random() * 3) + 1; // 1 ~ 3
-            List<OrderItem> orderItems = new ArrayList<>();
-
-            for (int j = 1; j <= itemCount; j++) {
-                OrderItem item = new OrderItem();
-                item.setProductName("Item " + i + "-" + j);
-                item.setPrice(i * 500);
-                item.setCount((int) (Math.random() * 5) + 1);   // 1 ~ 5
-                item.setOrder(order);
-                orderItems.add(item);
-            }
-
-
-            // 총 가격 계산
-            int totalPrice = orderItems.stream()
-                    .mapToInt(OrderItem::calculateTotalPrice)
-                    .sum();
-
-            order.setTotalPrice(totalPrice);
-            order.setOrderItems(orderItems);
-
-            createOrder(order);
-        }
+    @Transactional
+    public void work1() {
+        if (productService.count() > 0) return;
+        Product product1 = productService.create(
+                "원두커피 베트남 로부스타 G1 1kg 커피창고 고소한 맛있는 홀빈 콩",
+                "커피콩",
+                "14900",
+                "https://shop-phinf.pstatic.net/20240531_84/17171115333012Dsah_JPEG/118247422005482143_630751200.jpg"
+        );
+        Product product2 = productService.create(
+                "테라로사 올데이 블렌드 원두커피 1.13kg",
+                "커피콩",
+                "36900",
+                "https://shopping-phinf.pstatic.net/main_1750344/17503448138.20190215162842.jpg"
+        );
+        Product product3 = productService.create(
+                "스타벅스 커클랜드 원두커피 하우스 블렌드 1.13kg",
+                "커피콩",
+                "23860",
+                "https://shopping-phinf.pstatic.net/main_2461161/24611612527.1.20201027171504.jpg"
+        );
+        Product product4 = productService.create(
+                "산미높은 약배전원두 에티오피아 코케허니 예가체프G1 스페셜티 갓볶은 원두홀빈 200g [원산지:에티오피아]",
+                "커피콩",
+                "11200",
+                "https://shop-phinf.pstatic.net/20241019_251/1729335546752dKz5H_JPEG/63468447768544782_588487658.jpg"
+        );
     }
 
-    public void createOrder(Order order) {
+    @Transactional
+    public void work2() {
+        if (orderService.count() > 0) return;
 
-        for (OrderItem item : order.getOrderItems()) {
-            item.setOrder(order);
-        }
-
-        orderRepository.save(order);
+        IntStream.rangeClosed(1, ORDER_COUNT)
+                .mapToObj(this::generateDummyOrder)
+                .forEach(orderService::createOrder);
     }
+
+    /**
+     * 테스트용 Order 객체를 생성하는 메서드입니다.
+     *
+     * @param orderIndex Order 객체의 식별자 역할을 하는 숫자로, 이메일 주소와 OrderItem의 이름에 사용됩니다.
+     * @return 가공된 Order 객체
+     */
+    private Order generateDummyOrder(int orderIndex) {
+        Order order = new Order();
+        order.setEmail("user" + orderIndex + "@example.com");
+        order.setStatus(DeliveryStatus.PAYMENT_COMPLETED);
+
+        List<OrderItem> orderItems = generateDummyOrderItems(orderIndex, order);
+
+        // 총 가격 계산
+        int totalPrice = orderItems.stream()
+                .mapToInt(OrderItem::calculateTotalPrice)
+                .sum();
+
+        order.setTotalPrice(totalPrice);
+        order.setOrderItems(orderItems);
+        return order;
+    }
+
+    /**
+     * 테스트용 OrderItems 객체를 생성하는 메서드입니다.
+     * @param orderIndex orderItem의 이름 구별에 사용됩니다.
+     * @param order orderItem의 ID 에 사용됩니다.
+     * @return 가공된 orderItem 객체
+     */
+    @SuppressWarnings("all")
+    private static List<OrderItem> generateDummyOrderItems(int orderIndex, Order order) {
+        List<OrderItem> orderItems = IntStream.rangeClosed(1, 2)
+                .mapToObj(itemIndex -> {
+                    OrderItem item = new OrderItem();
+                    item.setProductName("Item " + orderIndex + "-" + itemIndex);
+                    item.setPrice(ITEM_PRICE);
+                    item.setCount(ITEM_COUNT);
+                    item.setOrder(order);
+                    return item;
+                })
+                .collect(Collectors.toList());
+
+        return orderItems;
+    }
+
 }

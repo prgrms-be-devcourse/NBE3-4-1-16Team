@@ -1,5 +1,6 @@
 package team16.spring_project1.global.jpa.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.AccessLevel;
@@ -18,10 +19,12 @@ public class BaseTime extends BaseEntity {
 
     @CreatedDate
     @Setter(AccessLevel.PRIVATE)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime createDate;
 
     @LastModifiedDate
     @Setter(AccessLevel.PRIVATE)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime modifyDate;
 
 }

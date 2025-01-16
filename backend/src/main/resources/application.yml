@@ -49,3 +49,13 @@ custom:
     secretKey: abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890
   accessToken:
     expirationSeconds: "#{60*20}"
+scheduler:
+  cron:
+    prepare: "0 0 13 * * ?"       # prepareDelivery 메서드
+    shipped: "0 50 13 * * ?"      # startDelivery 메서드
+    completed: "0 0 14 * * ?"     # endDelivery 메서드
+    test:
+      prepare: "*/15 * * * * ?"       # 매 15초마다 실행
+      shipped: "*/30 * * * * ?"       # 매 30초마다 실행
+      completed: "*/45 * * * * ?"      # 매 1분마다 실행
+      reset: "0 * * * * ?"             # 매 1분마다 실행
