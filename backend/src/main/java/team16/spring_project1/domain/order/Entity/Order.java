@@ -3,6 +3,8 @@ package team16.spring_project1.domain.order.Entity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,15 +22,18 @@ import java.util.List;
 public class Order extends BaseTime {
 
     @Email
-    @Column(nullable = false)
+    @NotBlank
     @Schema(description = "이메일", example = "test@gmail.com")
     private String email;
 
     @Enumerated(EnumType.STRING)
+    @NotBlank
     @Schema(description = "상품 상태", example = "PAYMENT_COMPLETED")
     private DeliveryStatus status;
 
     @Schema(description = "주문 금액", example = "1000")
+    @NotBlank
+    @Min(1)
     private int totalPrice;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)

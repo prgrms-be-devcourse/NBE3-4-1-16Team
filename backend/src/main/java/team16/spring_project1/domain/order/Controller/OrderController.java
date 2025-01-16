@@ -61,7 +61,7 @@ public class OrderController {
             )
             @RequestParam String status) {
         DeliveryStatus deliveryStatus = DeliveryStatus.valueOf(status.toUpperCase());
-        OrderResponseDTO updatedOrder = orderService.updateOrderStatus(id, deliveryStatus);
+        OrderResponseDTO updatedOrder = orderService.updateOrderStatusAndGetOrders(id, deliveryStatus);
         return ResponseEntity.ok(ApiResponse.success(updatedOrder));
     }
 

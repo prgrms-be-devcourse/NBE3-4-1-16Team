@@ -80,7 +80,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponseDTO updateOrderStatus(Long id, DeliveryStatus status) {
+    public OrderResponseDTO updateOrderStatusAndGetOrders(Long id, DeliveryStatus status) {
         Order order = getOrderById(id);
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
@@ -93,6 +93,15 @@ public class OrderService {
 
         return orderRepository.existsById(id);
     }
+
+    public void updateOrderStatus(String currentStatus, String newStatus) {
+        orderRepository.updateStatusByCurrentStatus(currentStatus, newStatus);
+    }
+
+    public void resetStatus() {
+        orderRepository.resetAllStatuses(DeliveryStatus.PAYMENT_COMPLETED.name());
+    }
+
 
     public long count() {
         return orderRepository.count();
@@ -122,5 +131,4 @@ public class OrderService {
                 item.getModifyDate()
         );
     }
-
 }
