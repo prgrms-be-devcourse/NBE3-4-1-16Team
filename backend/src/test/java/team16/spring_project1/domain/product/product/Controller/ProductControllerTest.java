@@ -42,7 +42,7 @@ public class ProductControllerTest {
                                     "category": "테스트 카테고리",
                                     "imageUrl": "https://naver.com",
                                     "productName": "테스트 제품 이름",
-                                    "price": "5000"
+                                    "price": 5000
                                 }
                                 """.stripIndent())
                         .contentType(
@@ -56,7 +56,7 @@ public class ProductControllerTest {
         assertThat(product.getProductName()).isEqualTo("테스트 제품 이름");
         assertThat(product.getImageUrl()).isEqualTo("https://naver.com");
         assertThat(product.getCategory()).isEqualTo("테스트 카테고리");
-        assertThat(product.getPrice()).isEqualTo("5000");
+        assertThat(product.getPrice()).isEqualTo(5000);
 
         resultActions
                 .andExpect(handler().handlerType(ProductController.class))
@@ -75,7 +75,7 @@ public class ProductControllerTest {
                                     "category": "",
                                     "imageUrl": "",
                                     "productName": "",
-                                    "price": ""
+                                    "price": 0
                                 }
                                 """.stripIndent())
                         .contentType(
@@ -90,7 +90,7 @@ public class ProductControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("""
                         category-NotBlank-must not be blank
-                        price-NotBlank-must not be blank
+                        price-Min-must be greater than or equal to 1
                         productName-NotBlank-must not be blank
                         """.stripIndent().trim()));
     }
@@ -134,7 +134,7 @@ public class ProductControllerTest {
                                     "category": "수정된커피콩",
                                     "imageUrl": "/",
                                     "productName": "수정된 커피콩",
-                                    "price": "9999"
+                                    "price": 9999
                                 }
                                 """.stripIndent())
                         .contentType(
@@ -155,7 +155,7 @@ public class ProductControllerTest {
                                     "category": "수정된커피콩",
                                     "imageUrl": "/",
                                     "productName": "수정된 커피콩",
-                                    "price": "9999"
+                                    "price": 9999
                                 }
                                 """.stripIndent())
                         .contentType(
