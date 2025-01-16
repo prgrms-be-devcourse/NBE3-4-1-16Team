@@ -42,4 +42,5 @@ db_dev.trace.db
 
 #
 node_modules/axios/
+api-docs.json
 
