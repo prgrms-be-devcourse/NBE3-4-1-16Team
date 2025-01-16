@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import '../globals.css'
+import Link from 'next/link'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -27,9 +28,20 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <header>헤더</header>
-        <main>{children}</main>
-        <footer>푸터</footer>
+        <header className="border-[#ccc] border-b p-5">
+          <h1>
+            <Link href="/admin/products">
+              Grids & Circles <span>ADMIN</span>
+            </Link>
+          </h1>
+          <nav>
+            <Link href="/admin/products/create">제품 등록</Link>
+          </nav>
+        </header>
+        <main className="flex-grow p-5">{children}</main>
+        <footer className="p-8 text-center border-t border-[#ccc] text-sm text-gray-400">
+          ⓒ 2025 NBE3-4-1-Team16 ALL RIGHTS RESERVED.
+        </footer>
       </body>
     </html>
   )
