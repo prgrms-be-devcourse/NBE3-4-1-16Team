@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <>
       <header className="border-[#ccc] border-b p-5 flex bg-white">
-        <h1 className="text-4xl font-bold align-middle">
+        <h1 className="text-4xl font-extrabold align-middle">
           <Link href="/admin/products">
             Grids & Circles
             <span className="text-sm text-gray-400 font-normal"> ADMIN</span>

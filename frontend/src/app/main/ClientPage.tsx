@@ -37,7 +37,7 @@ export default function ClientPage({
                   {' '}
                   {item.productName}
                 </div>
-                <div className="w-full justify-self-end text-3xl font-bold text-[#59473F]">
+                <div className="w-full justify-self-end text-3xl font-extrabold text-[#59473F]">
                   {Number(item.price).toLocaleString()}
                 </div>
                 <div className="mt-2 w-full justify-self-end relative">
