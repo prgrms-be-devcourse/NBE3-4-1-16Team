@@ -26,16 +26,19 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-[100dvh]`}
       >
-        <header className="border-[#ccc] border-b p-5">
-          <h1>
+        <header className="border-[#ccc] border-b p-5 flex">
+          <h1 className="text-3xl font-bold align-middle">
             <Link href="/admin/products">
-              Grids & Circles <span>ADMIN</span>
+              Grids & Circles
+              <span className="text-sm text-gray-400 font-normal"> ADMIN</span>
             </Link>
           </h1>
-          <nav>
-            <Link href="/admin/products/create">제품 등록</Link>
+          <nav className="ml-auto flex gap-8 items-center">
+            <Link href="/admin/products/create" className="align-middle block">
+              제품 등록
+            </Link>
           </nav>
         </header>
         <main className="flex-grow p-5">{children}</main>
