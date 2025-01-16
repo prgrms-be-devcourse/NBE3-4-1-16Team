@@ -55,6 +55,7 @@ scheduler:
     shipped: "0 50 13 * * ?"      # startDelivery 메서드
     completed: "0 0 14 * * ?"     # endDelivery 메서드
     test:
-      prepare: "*/5 * * * * ?"    # 5초마다 준비
-      shipped: "*/10 * * * * ?"   # 10초마다 배송
-      completed: "*/15 * * * * ?" # 15초마다 완료
+      prepare: "*/15 * * * * ?"       # 매 15초마다 실행
+      shipped: "*/30 * * * * ?"       # 매 30초마다 실행
+      completed: "*/45 * * * * ?"      # 매 1분마다 실행
+      reset: "0 * * * * ?"             # 매 1분마다 실행

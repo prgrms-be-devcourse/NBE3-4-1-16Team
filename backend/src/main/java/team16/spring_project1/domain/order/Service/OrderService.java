@@ -3,10 +3,10 @@ package team16.spring_project1.domain.order.Service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team16.spring_project1.domain.order.DTO.response.OrderItemResponseDTO;
 import team16.spring_project1.domain.order.DTO.response.OrderResponseDTO;
 import team16.spring_project1.domain.order.Entity.Order;
 import team16.spring_project1.domain.order.Entity.OrderItem;
+import team16.spring_project1.domain.order.Mapper.OrderMapper;
 import team16.spring_project1.domain.order.Repository.OrderRepository;
 import team16.spring_project1.global.enums.DeliveryStatus;
 
@@ -14,10 +14,14 @@ import java.util.List;
 
 @Service
 public class OrderService {
-    private final OrderRepository orderRepository;
+    private static final Order DEFAULT_ORDER = new Order();
 
-    public OrderService(OrderRepository orderRepository) {
+    private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
+
+    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
+        this.orderMapper = orderMapper;
     }
 
     @Transactional
@@ -32,12 +36,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDTO createOrderDTO(Order order) {
-
-        for (OrderItem item : order.getOrderItems()) {
-            item.setOrder(order);
-        }
-
-        return toOrderResponseDTO(orderRepository.save(order));
+        return orderMapper.toOrderResponseDTO(createOrder(order));
     }
 
     @Transactional(readOnly = true)
@@ -47,9 +46,9 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderResponseDTO> getAllOrderDTO() {
-        return orderRepository.findAll()
+        return getAllOrders()
                 .stream()
-                .map(this::toOrderResponseDTO)
+                .map(orderMapper::toOrderResponseDTO)
                 .toList();
     }
 
@@ -60,38 +59,43 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderResponseDTO> getOrdersDTOByEmail(String email) {
-        return orderRepository.findByEmail(email)
+        return getOrdersByEmail(email)
                 .stream()
-                .map(this::toOrderResponseDTO)
+                .map(orderMapper::toOrderResponseDTO)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public Order getOrderById(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        return orderRepository.findById(id).orElse(DEFAULT_ORDER);
     }
 
     @Transactional(readOnly = true)
     public OrderResponseDTO getOrderDTOById(Long id) {
-        return orderRepository.findById(id)
-                .map(this::toOrderResponseDTO)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        return orderMapper.toOrderResponseDTO(getOrderById(id));
     }
 
     @Transactional
     public OrderResponseDTO updateOrderStatusAndGetOrders(Long id, DeliveryStatus status) {
         Order order = getOrderById(id);
-        order.setStatus(status);
-        Order updatedOrder = orderRepository.save(order);
-        return toOrderResponseDTO(updatedOrder); // DTO로 변환하여 반환
+
+        if (order == DEFAULT_ORDER) {
+            return orderMapper.toOrderResponseDTO(order);
+        } else {
+            order.setStatus(status);
+            Order updatedOrder = orderRepository.save(order);
+            return orderMapper.toOrderResponseDTO(updatedOrder);
+        }
     }
 
     @Transactional
     public boolean deleteOrder(Long id) {
-        orderRepository.deleteById(id);
+        if (!orderRepository.existsById(id)) {
+            return false;
+        }
 
-        return orderRepository.existsById(id);
+        orderRepository.deleteById(id);
+        return true;
     }
 
     public void updateOrderStatus(String currentStatus, String newStatus) {
@@ -105,30 +109,5 @@ public class OrderService {
 
     public long count() {
         return orderRepository.count();
-    }
-
-    private OrderResponseDTO toOrderResponseDTO(Order order) {
-        return new OrderResponseDTO(
-                order.getId(),
-                order.getEmail(),
-                order.getStatus().name(),
-                order.getTotalPrice(),
-                order.getCreateDate(),
-                order.getModifyDate(),
-                order.getOrderItems().stream()
-                        .map(this::toOrderItemResponseDTO)
-                        .toList()
-        );
-    }
-
-    private OrderItemResponseDTO toOrderItemResponseDTO(OrderItem item) {
-        return new OrderItemResponseDTO(
-                item.getId(),
-                item.getProductName(),
-                item.getCount(),
-                item.getPrice(),
-                item.getCreateDate(),
-                item.getModifyDate()
-        );
     }
 }

@@ -16,14 +16,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Transactional
     @Modifying
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(value = "UPDATE orders SET status = :newStatus WHERE status = :currentStatus", nativeQuery = true)
     void updateStatusByCurrentStatus(@Param("currentStatus") String currentStatus,
                                      @Param("newStatus") String newStatus);
 
     @Transactional
     @Modifying
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(value = "UPDATE orders SET status = :newStatus", nativeQuery = true)
     void resetAllStatuses(@Param("newStatus") String newStatus);
 

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,12 +28,12 @@ public class Order extends BaseTime {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank
+    @NotNull
     @Schema(description = "상품 상태", example = "PAYMENT_COMPLETED")
     private DeliveryStatus status;
 
     @Schema(description = "주문 금액", example = "1000")
-    @NotBlank
+    @NotNull
     @Min(1)
     private int totalPrice;
 

@@ -34,8 +34,9 @@ public class OrderDeliveryScheduler {
         orderService.updateOrderStatus(DeliveryStatus.SHIPPING.name(), DeliveryStatus.COMPLETED.name());
     }
 
-    // 테스트 스케줄러, 작동이 필요할 시 사용
-    /*
+    // 테스트 스케줄러, 테스트 로직이 필요할 시 사용
+/*
+
     @Scheduled(cron = "${scheduler.cron.test.prepare}")
     public void testPrePareDelivery() {
         orderService.updateOrderStatus(DeliveryStatus.PAYMENT_COMPLETED.name(), DeliveryStatus.PREPARING.name());
@@ -50,6 +51,12 @@ public class OrderDeliveryScheduler {
     public void testEndDelivery() {
         orderService.updateOrderStatus(DeliveryStatus.SHIPPING.name(), DeliveryStatus.COMPLETED.name());
     }
-    */
+
+    @Scheduled(cron = "${scheduler.cron.test.reset}")
+    public void testInitDelivery() {
+        orderService.resetStatus();
+
+    }
+*/
 
 }

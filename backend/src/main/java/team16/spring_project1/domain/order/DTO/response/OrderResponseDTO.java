@@ -11,4 +11,8 @@ public record OrderResponseDTO(
     LocalDateTime createdAt,
     LocalDateTime modifiedAt,
     List<OrderItemResponseDTO> orderItems
-) {}
+) {
+    public boolean isEmpty() {
+        return this.id == null;
+    }
+}

@@ -48,6 +48,6 @@ public class OrderSchedulerController {
     @GetMapping("/completed")
     public ResponseEntity<ApiResponse<String>> runEndDelivery() {
         orderSchedulerController.endDelivery();
-        return ResponseEntity.ok(ApiResponse.success("스케줄러 배송 완료 성공"));
+        return ResponseEntity.ok(ApiResponse.success("초기화 성공"));
     }
 }
