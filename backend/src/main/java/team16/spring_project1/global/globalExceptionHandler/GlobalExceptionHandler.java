@@ -1,5 +1,6 @@
 package team16.spring_project1.global.globalExceptionHandler;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 @RequiredArgsConstructor
+@Hidden
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<String>> handle(MethodArgumentNotValidException ex) {
