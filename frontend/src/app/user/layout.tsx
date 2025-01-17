@@ -18,7 +18,7 @@ export default function RootLayout({
                 <h1 className="text-4xl font-extrabold align-middle">
                     <Link href="/user">
                         Grids & Circles
-                        <span className="text-sm text-gray-400 font-normal">USER</span>
+                        <span className="text-sm text-gray-400 font-normal ml-2">USER</span>
                     </Link>
                 </h1>
                 <nav className="ml-auto flex gap-5 items-center">
@@ -29,7 +29,7 @@ export default function RootLayout({
                         주문 등록
                     </Link>
                     <Link
-                        href="#"
+                        href="/user/order/cart"
                         className="align-middle block text-lg text-gray-800 font-semibold"
                     >
                         장바구니

@@ -22,134 +22,66 @@ export default function ClientPage({
 
     return (
         <div>
-            <h1
-                style={{
-                    textAlign: 'center',
-                    fontSize: '2rem',
-                    margin: '20px 0',
-                    fontWeight: 'bold',
-                    color: '#333',
-                }}
-            >
+            <h1 className="text-2xl my-5 font-bold text-gray-800">
                 상품 목록
             </h1>
 
             {products.length > 0 ? (
-                <ul style={{listStyle: 'none', padding: 0}}>
+                <ul className="list-none p-0">
                     {products.map((product, index) => (
 
                         <li
                             key={index}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                padding: '15px',
-                                border: '1px solid #ddd',
-                                borderRadius: '10px',
-                                backgroundColor: '#f9f9f9',         // 색상
-                                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',  // 그림자
-                                marginBottom: '15px',           // 하단 marin
-                            }}
+                            className="flex  p-4 border border-gray-300 rounded-lg bg-gray-100 shadow-md mb-4"
                         >
 
                             {/* 이미지 */}
                             <img
                                 src={product.imageUrl}
                                 alt={product.productName}
-                                style={{
-                                    width: '75px',
-                                    height: '75px',
-                                    objectFit: 'cover',
-                                    marginRight: '10px',
-                                    borderRadius: '5px',
-                                }}
+                                className="w-20 h-20 object-cover mr-3 rounded-md"
                             />
 
                             {/* 상품 정보 */}
                             <div style={{flex: 1}}>
-                                <h2 style={{fontSize: '16px', margin: 0}}>
-                                    {product.productName}
-                                </h2>
-                                <p style={{fontSize: '14px', margin: '5px 0'}}>
-                                    {product.price}원
-                                </p>
+                                <h2 className="text-base font-bold m-0">{product.productName}</h2>
+                                <p className="text-sm my-1">{product.price}원</p>
 
                                 {/* 카테고리 */}
-                                <p
-                                    style={{
-                                        display: 'inline-block',
-                                        fontSize: '12px',
-                                        fontWeight: 'bold',
-                                        color: '#fff',
-                                        backgroundColor: '#59473F',
-                                        padding: '3px 8px',
-                                        borderRadius: '5px',
-                                        marginTop: '5px',
-                                    }}
-                                >
+                                <p className="inline-block text-xs font-bold text-white bg-coffee py-1 px-2 rounded-md mt-1">
                                     {product.category}
                                 </p>
                             </div>
 
-                            {/* 수량 선택 */}
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '5px',
-                                    marginRight: '10px',
-                                }}
-                            >
-                                <label htmlFor={`count-${index}`} style={{fontSize: '14px'}}>
-                                    수량:
-                                </label>
-                                <input
-                                    id={`count-${index}`}
-                                    type="number"
-                                    value={counts[index]}
-                                    min={1}
-                                    style={{
-                                        width: '50px',
-                                        padding: '5px',
-                                        border: '1px solid #ddd',
-                                        borderRadius: '5px',
-                                        textAlign: 'center',
+                            <div className="flex items-center gap-4">
+                                {/* 수량 선택 */}
+                                <div className="flex items-center gap-2">
+                                    <label htmlFor={`count-${index}`} className="text-sm">
+                                        수량:
+                                    </label>
+                                    <input
+                                        id={`count-${index}`}
+                                        type="number"
+                                        value={counts[index]}
+                                        min={1}
+                                        className="w-12 p-1 border border-gray-300 rounded-md text-center"
+                                        onChange={(e) =>
+                                            handleCountChange(index, parseInt(e.target.value, 10))  // 정수 변환
+                                        }
+                                    />
+                                </div>
+
+                                {/* 추가 버튼 */}
+                                <button
+                                    className="h-10 py-2 px-3 bg-white border border-gray-300 rounded-md hover:bg-gray-200 cursor-pointer"
+                                    onClick={() => {
+                                        console.log({...product, count: counts[index],});
+                                        alert(`${product.productName} ${counts[index]}개가 장바구니에 추가되었습니다`);
                                     }}
-                                    onChange={(e) =>
-                                        handleCountChange(
-                                            index,
-                                            parseInt(e.target.value, 10) // 정수 변환
-                                        )
-                                    }
-                                />
+                                >
+                                    추가
+                                </button>
                             </div>
-
-                            {/* 추가 버튼 */}
-                            <button
-                                style={{
-                                    padding: '8px 12px',
-                                    backgroundColor: '#fff',
-                                    border: '1px solid #ddd',
-                                    borderRadius: '5px',
-                                    cursor: 'pointer',
-                                }}
-                                onClick={() => {
-                                    console.log({
-                                        ...product,
-                                        count: counts[index],
-                                    });
-
-                                    alert(
-                                        `${product.productName} ${counts[index]}개가 장바구니에 추가되었습니다`
-                                    );
-                                }}
-                                // 마우스 호버 시
-                                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "rgba(240,240,240,0)")}
-                                // 호버 해제 시
-                                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#fff")}
-                            >
-                                추가
-                            </button>
                         </li>
                     ))}
                 </ul>
