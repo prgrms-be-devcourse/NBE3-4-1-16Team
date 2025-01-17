@@ -39,3 +39,8 @@ out/
 ### Custom ###
 db_dev.mv.db
 db_dev.trace.db
+
+#
+node_modules/axios/
+api-docs.json
+
