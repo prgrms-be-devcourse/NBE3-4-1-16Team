@@ -73,6 +73,22 @@ export default function ClientPage({
                                 <p style={{fontSize: '14px', margin: '5px 0'}}>
                                     {product.price}원
                                 </p>
+
+                                {/* 카테고리 */}
+                                <p
+                                    style={{
+                                        display: 'inline-block',
+                                        fontSize: '12px',
+                                        fontWeight: 'bold',
+                                        color: '#fff',
+                                        backgroundColor: '#59473F',
+                                        padding: '3px 8px',
+                                        borderRadius: '5px',
+                                        marginTop: '5px',
+                                    }}
+                                >
+                                    {product.category}
+                                </p>
                             </div>
 
                             {/* 수량 선택 */}
