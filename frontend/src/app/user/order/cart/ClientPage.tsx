@@ -2,6 +2,8 @@
 
 import type {components} from '@/lib/backend/apiV1/schema';
 import React from 'react';
+import client from "@/lib/backend/client";
+import {useRouter} from "next/navigation";
 
 export default function ClientPage({
                                        responseBody,
@@ -10,14 +12,56 @@ export default function ClientPage({
     responseBody: components['schemas']['ApiResponseListProductDto'];
     counts: number[];
 }) {
+    const router = useRouter()
     const products = responseBody.content ?? []; // 비어있을 경우 기본 값 []
+    const totalPrice = products.reduce((total, product, index) => total + counts[index] * product.price, 0);
 
-    // const [counts, setCounts] = useState<number[]>(
-    //     products.map(() => Math.floor(Math.random() * 5)) // 0부터 4까지 무작위 정수
-    // );
+    const handlePayment = async () => {
+        const emailInput = document.getElementById("email") as HTMLInputElement;
+        const email = emailInput?.value || "";
+
+        if (email === "") {
+            alert("이메일을 입력해주세요.");
+            emailInput.focus();
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert("유효한 이메일 주소를 입력해주세요.");
+            emailInput.focus();
+            return;
+        }
+
+        const requestBody = {
+            body: {
+                email,
+                totalPrice: totalPrice,
+                orderItems: products.map((product, index) => ({
+                    productName: product.productName,
+                    count: counts[index],
+                    price: product.price,
+                })),
+            },
+        };
 
 
-    console.log(counts);
+        try {
+            const response = await client.POST("/order", requestBody ?? []);
+
+            if(response.data?.success) {
+                alert("결제에 성공했습니다.");
+                router.push('/user');
+            } else {
+                alert(response.error?.message);
+            }
+        } catch (error) {
+            console.log(error);
+            alert("결제에 실패했습니다.")
+        }
+
+    };
+
 
     return (
         <div>
@@ -90,7 +134,7 @@ export default function ClientPage({
                         <div className="flex justify-between items-cente text-2xl font-black">
                             <span>최종 결제 금액</span>
                             <span className="ml-auto">
-                                {products.reduce((total, product, index) => total + counts[index] * product.price, 0)} 원
+                                {totalPrice} 원
                             </span>
                         </div>
                     </div>
@@ -115,8 +159,7 @@ export default function ClientPage({
                     <button
                         className="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-gray-700"
                         onClick={() => {
-                            // TODO : API 전송 로직
-                            alert(`결제가 완료되었습니다.`);
+                            handlePayment();
                         }}
                     >
                         결제하기

@@ -4,6 +4,7 @@ package team16.spring_project1.domain.order.Controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class OrderController {
 
     @Operation(summary = "Create Order", description = "새로운 주문을 생성합니다.")
     @PostMapping
-    public ResponseEntity<ApiResponse<OrderResponseDTO>> createOrder(@RequestBody Order order) {
+    public ResponseEntity<ApiResponse<OrderResponseDTO>> createOrder(@Valid @RequestBody Order order) {
 
         OrderResponseDTO savedOrder = orderService.createOrderDTO(order);
         return ResponseEntity

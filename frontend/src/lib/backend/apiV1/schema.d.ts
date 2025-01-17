@@ -291,7 +291,7 @@ export interface components {
              * @example PAYMENT_COMPLETED
              * @enum {string}
              */
-            status: "UNKNOWN" | "CANCELLED" | "PAYMENT_COMPLETED" | "PREPARING" | "SHIPPING" | "COMPLETED";
+            readonly status?: "UNKNOWN" | "CANCELLED" | "PAYMENT_COMPLETED" | "PREPARING" | "SHIPPING" | "COMPLETED";
             /**
              * Format: int32
              * @description 주문 금액
