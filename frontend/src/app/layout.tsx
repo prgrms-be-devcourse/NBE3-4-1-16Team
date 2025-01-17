@@ -22,6 +22,8 @@ export default function RootLayout({
         className={`${notoSansKr.className} antialiased flex flex-col min-h-[100dvh] bg-[#f5f5f5]`}
       >
         {children}
+
+        {/*  Footer  */}
         <footer className="p-8 mt-20 text-center border-t border-[#ccc] text-sm text-white bg-[#59473F]">
           ⓒ 2025 NBE3-4-1-Team16 ALL RIGHTS RESERVED.
         </footer>

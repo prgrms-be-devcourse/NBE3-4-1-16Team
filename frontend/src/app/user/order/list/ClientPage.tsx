@@ -1,5 +1,5 @@
 'use client'
 
 export default function ClientPage() {
-    return <>관리자 로그인</>
+    return <>사용자 목록 페이지</>
 }
