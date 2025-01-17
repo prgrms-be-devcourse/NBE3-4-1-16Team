@@ -3,7 +3,13 @@ package team16.spring_project1.domain.member.Entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import team16.spring_project1.global.jpa.entity.BaseTime;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,5 +29,25 @@ public class Member extends BaseTime {
 
     public boolean matchPassword(String password) {
         return this.password.equals(password);
+    }
+
+    public boolean isAdmin() {
+        return "admin".equals(username);
+    }
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getAuthoritiesAsStringList()
+                .stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+    }
+
+    public List<String> getAuthoritiesAsStringList() {
+        List<String> authorities = new ArrayList<>();
+
+        if (isAdmin())
+            authorities.add("ROLE_ADMIN");
+
+        return authorities;
     }
 }

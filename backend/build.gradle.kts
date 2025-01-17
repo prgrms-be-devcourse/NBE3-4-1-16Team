@@ -51,6 +51,15 @@ dependencies {
 
 	// Springdoc OpenAPI for Swagger UI
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1")
+
+	// Spring security
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	testImplementation("org.springframework.security:spring-security-test")
+
+	// JWT
+	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 }
 
 tasks.withType<Test> {
