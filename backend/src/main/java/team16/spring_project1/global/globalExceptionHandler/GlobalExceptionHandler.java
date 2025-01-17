@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import team16.spring_project1.global.apiResponse.ApiResponse;
+import team16.spring_project1.global.exceptions.PasswordMismatchException;
 
 import java.util.Comparator;
 import java.util.NoSuchElementException;
@@ -41,6 +42,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<String>> handle(NoSuchElementException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.failure(ex.getMessage()));
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ApiResponse<String>> handle(PasswordMismatchException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.failure(ex.getMessage()));
     }
 }

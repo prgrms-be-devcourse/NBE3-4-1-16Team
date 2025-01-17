@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Transactional;
+import team16.spring_project1.domain.member.Entity.Member;
+import team16.spring_project1.domain.member.Service.MemberService;
 import team16.spring_project1.domain.order.Entity.Order;
 import team16.spring_project1.domain.order.Entity.OrderItem;
 import team16.spring_project1.domain.order.Service.OrderService;
@@ -26,6 +28,7 @@ public class BaseInitData {
 
     private final ProductService productService;
     private final OrderService orderService;
+    private final MemberService memberService;
 
     private static final int ORDER_COUNT = 3;
     private static final int ITEM_PRICE = 500;
@@ -40,6 +43,7 @@ public class BaseInitData {
         return args -> {
             self.work1();
             self.work2();
+            self.work3();
         };
     }
 
@@ -162,6 +166,16 @@ public class BaseInitData {
                 .collect(Collectors.toList());
 
         return orderItems;
+    }
+
+    @Transactional
+    public void work3() {
+        if (memberService.count() > 0) return;
+
+        Member admin = memberService.join(
+                "admin",
+                "1234"
+        );
     }
 
 }

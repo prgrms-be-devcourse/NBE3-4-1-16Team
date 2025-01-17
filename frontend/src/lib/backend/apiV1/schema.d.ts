@@ -366,7 +366,7 @@ export interface components {
              */
             price: number;
         };
-        ApiResponsePageDtoProductDto: {
+        ApiResponseListProductDto: {
             success?: boolean;
             message?: string;
             content?: components["schemas"]["PageDtoProductDto"];
@@ -439,6 +439,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseProductDto"];
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
@@ -474,6 +483,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
@@ -498,6 +516,15 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -542,6 +569,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseOrderResponseDTO"];
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
@@ -574,6 +610,15 @@ export interface operations {
                 };
                 content: {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponsePageDtoProductDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
             /** @description Not Found */
@@ -645,6 +690,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
@@ -672,6 +726,15 @@ export interface operations {
                 };
                 content: {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseListOrderResponseDTO"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
             /** @description Not Found */
@@ -718,35 +781,6 @@ export interface operations {
             };
         };
     };
-    categories: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseListProductDto"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
-                };
-            };
-        };
-    };
     getOrderById: {
         parameters: {
             query?: never;
@@ -765,6 +799,15 @@ export interface operations {
                 };
                 content: {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseOrderResponseDTO"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
             /** @description Not Found */
@@ -791,6 +834,15 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -827,6 +879,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
@@ -849,6 +910,15 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -885,6 +955,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
             /** @description Not Found */
             404: {
                 headers: {
@@ -907,6 +986,15 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -943,6 +1031,15 @@ export interface operations {
                 };
                 content: {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseListOrderResponseDTO"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
             /** @description Not Found */
