@@ -14,7 +14,7 @@ export default function ClientPage() {
     }
     if (form.category.value.length === 0) {
       alert("카테고리를 입력해주세요.");
-      category.focus();
+      // category.focus();
       return;
     }
     if (form.price.value.length === 0) {
@@ -36,7 +36,7 @@ export default function ClientPage() {
       },
     });
     if (response.error) {
-      alert(response.error.message);
+      // alert(response.error.message);
       return;
     }
     alert(response.data.message);

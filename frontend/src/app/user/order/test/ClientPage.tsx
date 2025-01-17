@@ -7,7 +7,7 @@ export default function ClientPage({
                                    }: {
     responseBody: components['schemas']['ApiResponseListOrderResponseDTO']
 }) {
-    const orders = responseBody.content;
+    const orders = responseBody.content ?? [];
 
     // console.log(orders);
 
