@@ -26,7 +26,7 @@ export default function RootLayout({
             장바구니
           </Link>
           <Link
-            href="#"
+            href="/user/order/list"
             className="align-middle block text-xl text-gray-800 font-semibold"
           >
             주문 확인
