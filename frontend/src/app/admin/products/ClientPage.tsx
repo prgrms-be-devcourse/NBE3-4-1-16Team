@@ -48,11 +48,11 @@ export default function ClientPage({
           </Link>
         </div>
 
-        <table className="table-fixed bg-white mt-3">
+        <table className="table-fixed bg-white mt-3 w-full">
           <colgroup>
             <col className="w-[80px]" />
             <col className="w-[180px]" />
-            <col className="" />
+            <col width="" />
             <col className="w-[150px]" />
             <col className="w-[100px]" />
             <col className="w-[130px]" />
@@ -61,7 +61,7 @@ export default function ClientPage({
           </colgroup>
           <thead className="text-center bg-[#59473F] text-white">
             <tr>
-              <th className="py-3">번호</th>
+              <th className="py-5">번호</th>
               <th>이미지</th>
               <th>제품명</th>
               <th>카테고리</th>
