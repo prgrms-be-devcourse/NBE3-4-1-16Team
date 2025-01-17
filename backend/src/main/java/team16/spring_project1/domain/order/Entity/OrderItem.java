@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,16 +22,16 @@ public class OrderItem extends BaseTime {
     @JsonIgnore
     private Order order;
 
-    @Column(name = "product_name", nullable = false)
+    @NotBlank
     @Schema(description = "상품 이름", example = "원두 1")
     private String productName;
 
-    @Column(nullable = false)
+    @NotNull
     @Min(1)
     @Schema(description = "상품 수량 (1 이상)", example = "1")
     private int count;
 
-    @Column(nullable = false)
+    @NotNull
     @Min(1)
     @Schema(description = "상품 가격 (1 이상)", example = "1000")
     private int price;

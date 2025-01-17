@@ -1,6 +1,5 @@
 package team16.spring_project1.global.globalExceptionHandler;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import team16.spring_project1.global.apiResponse.ApiResponse;
 
 import java.util.Comparator;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 @RequiredArgsConstructor
-@Hidden
 public class GlobalExceptionHandler {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<String>> handle(MethodArgumentNotValidException ex) {
         ex.printStackTrace();
@@ -36,6 +36,7 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.failure(message));
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ApiResponse<String>> handle(NoSuchElementException ex) {
         return ResponseEntity

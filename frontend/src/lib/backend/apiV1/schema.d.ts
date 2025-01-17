@@ -124,6 +124,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/order/scheduler/shipped": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * PREPARING TO SHIPPING
+         * @description PREPARING 상태를 SHIPPING 상태로 업데이트 합니다.
+         */
+        get: operations["runStartDelivery"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/order/scheduler/prepare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * PAYMENT_COMPLETED TO PREPARING
+         * @description PAYMENT_COMPLETED 상태를 PREPARING 상태로 업데이트 합니다.
+         */
+        get: operations["runPrepareDelivery"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/order/scheduler/payment_completed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * EVERYTHING TO PAYMENT_COMPLETED
+         * @description 모든 ORDER을 PAYMENT_COMPLETED 상태로 초기화 합니다.
+         */
+        get: operations["resetStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/order/scheduler/completed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * SHIPPING TO COMPLETED
+         * @description SHIPPING 상태를 COMPLETED 상태로 업데이트 합니다.
+         */
+        get: operations["runEndDelivery"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/order/by-email": {
         parameters: {
             query?: never;
@@ -148,17 +228,17 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ApiResponseString: {
+            success?: boolean;
+            message?: string;
+            content?: string;
+        };
         ProductRequest: {
             productName: string;
             category: string;
             /** Format: int32 */
             price?: number;
             imageUrl?: string;
-        };
-        ApiResponseString: {
-            success?: boolean;
-            message?: string;
-            content?: string;
         };
         ApiResponseOrderResponseDTO: {
             success?: boolean;
@@ -177,6 +257,8 @@ export interface components {
             createdAt?: string;
             /** Format: date-time */
             modifiedAt?: string;
+            /** Format: int32 */
+            totalPrice?: number;
         };
         OrderResponseDTO: {
             /** Format: int64 */
@@ -190,6 +272,7 @@ export interface components {
             /** Format: date-time */
             modifiedAt?: string;
             orderItems?: components["schemas"]["OrderItemResponseDTO"][];
+            empty?: boolean;
         };
         Order: {
             /** Format: int64 */
@@ -202,23 +285,22 @@ export interface components {
              * @description 이메일
              * @example test@gmail.com
              */
-            email?: string;
+            email: string;
             /**
              * @description 상품 상태
              * @example PAYMENT_COMPLETED
              * @enum {string}
              */
-            status?: "PAYMENT_COMPLETED" | "PREPARING" | "SHIPPING" | "COMPLETED";
+            status: "UNKNOWN" | "CANCELLED" | "PAYMENT_COMPLETED" | "PREPARING" | "SHIPPING" | "COMPLETED";
             /**
              * Format: int32
              * @description 주문 금액
              * @example 1000
              */
-            totalPrice?: number;
+            totalPrice: number;
             /** @description 주문에 포함된 상품 목록 */
             orderItems?: components["schemas"]["OrderItem"][];
         };
-        /** @description 주문에 포함된 상품 목록 */
         OrderItem: {
             /** Format: int64 */
             readonly id?: number;
@@ -230,24 +312,19 @@ export interface components {
              * @description 상품 이름
              * @example 원두 1
              */
-            productName?: string;
+            productName: string;
             /**
              * Format: int32
              * @description 상품 수량 (1 이상)
              * @example 1
              */
-            count?: number;
+            count: number;
             /**
              * Format: int32
              * @description 상품 가격 (1 이상)
              * @example 1000
              */
-            price?: number;
-        };
-        ApiResponseOrder: {
-            success?: boolean;
-            message?: string;
-            content?: components["schemas"]["Order"];
+            price: number;
         };
         ApiResponseListProductDto: {
             success?: boolean;
@@ -256,16 +333,16 @@ export interface components {
         };
         ProductDto: {
             /** Format: int64 */
-            id?: number;
+            id: number;
             /** Format: date-time */
-            createDate?: string;
+            createDate: string;
             /** Format: date-time */
-            modifyDate?: string;
-            productName?: string;
+            modifyDate: string;
+            productName: string;
             /** Format: int32 */
-            price?: number;
+            price: number;
             imageUrl?: string;
-            category?: string;
+            category: string;
         };
         ApiResponseProductDto: {
             success?: boolean;
@@ -306,6 +383,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseProductDto"];
                 };
             };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
         };
     };
     modify: {
@@ -332,6 +418,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
         };
     };
     delete: {
@@ -347,6 +442,15 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -382,6 +486,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseOrderResponseDTO"];
                 };
             };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
         };
     };
     items: {
@@ -402,6 +515,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseListProductDto"];
                 };
             };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
         };
     };
     create: {
@@ -419,6 +541,15 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -446,6 +577,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseListOrderResponseDTO"];
                 };
             };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
         };
     };
     createOrder: {
@@ -467,7 +607,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseOrder"];
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseOrderResponseDTO"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
         };
@@ -492,6 +641,15 @@ export interface operations {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseOrderResponseDTO"];
                 };
             };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
         };
     };
     deleteOrder: {
@@ -507,6 +665,131 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+        };
+    };
+    runStartDelivery: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+        };
+    };
+    runPrepareDelivery: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+        };
+    };
+    resetStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+        };
+    };
+    runEndDelivery: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -534,6 +817,15 @@ export interface operations {
                 };
                 content: {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseListOrderResponseDTO"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
                 };
             };
         };

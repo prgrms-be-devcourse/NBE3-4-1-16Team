@@ -16,7 +16,6 @@ import team16.spring_project1.global.apiResponse.ApiResponse;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -30,9 +29,9 @@ public class ProductController {
     @Operation(summary = "Create Product", description = "새로운 상품을 등록합니다.")
     @PostMapping
     @Transactional
-    public ResponseEntity<ApiResponse<String>> create(@RequestBody @Valid ProductRequest productRequest){
-        Product product =  productService.create(productRequest);
-        if(product == null)
+    public ResponseEntity<ApiResponse<String>> create(@RequestBody @Valid ProductRequest productRequest) {
+        Product product = productService.create(productRequest);
+        if (product == null)
             throw new NoSuchElementException("상품등록에 실패했습니다.");
         return ResponseEntity.ok(ApiResponse.success("상품 등록에 성공했습니다."));
     }
@@ -42,7 +41,7 @@ public class ProductController {
     @GetMapping
     @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse<List<ProductDto>>> items() {
-        List<ProductDto> products =  productService
+        List<ProductDto> products = productService
                 .findAll()
                 .stream()
                 .map(ProductDto::new)
@@ -66,18 +65,19 @@ public class ProductController {
     @Operation(summary = "Update Product Status", description = "상품 정보를 업데이트합니다.")
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<ApiResponse<String>> modify(@RequestBody @Valid ProductRequest productRequest, @PathVariable("id") long id){
+    public ResponseEntity<ApiResponse<String>> modify(@RequestBody @Valid ProductRequest productRequest, @PathVariable("id") long id) {
         Product product = productService.findById(id).orElseThrow(
                 () -> new NoSuchElementException("해당 상품은 존재하지 않습니다.")
-        );;
-        productService.modify(product,productRequest);
+        );
+
+        productService.modify(product, productRequest);
         return ResponseEntity.ok(ApiResponse.success("상품정보가 성공적으로 수정되었습니다."));
     }
 
     @Operation(summary = "Delete Product", description = "상품을 삭제합니다.")
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<ApiResponse<String>> delete(@PathVariable long id){
+    public ResponseEntity<ApiResponse<String>> delete(@PathVariable long id) {
         Product product = productService.findById(id).orElseThrow(
                 () -> new NoSuchElementException("해당 상품은 이미 삭제되었거나 존재하지 않습니다.")
         );

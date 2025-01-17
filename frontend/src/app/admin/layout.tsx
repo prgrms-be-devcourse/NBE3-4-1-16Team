@@ -1,5 +1,4 @@
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import type {Metadata} from 'next'
 import '../globals.css'
 import Link from 'next/link'
 
@@ -18,7 +17,7 @@ export default function RootLayout({
         <h1 className="text-4xl font-extrabold align-middle">
           <Link href="/admin/products">
             Grids & Circles
-            <span className="text-sm text-gray-400 font-normal"> ADMIN</span>
+            <span className="text-sm text-gray-400 font-normal">ADMIN</span>
           </Link>
         </h1>
         <nav className="ml-auto flex gap-5 items-center">
