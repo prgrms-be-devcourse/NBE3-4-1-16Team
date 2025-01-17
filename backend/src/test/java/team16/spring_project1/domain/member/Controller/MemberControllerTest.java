@@ -1,6 +1,5 @@
 package team16.spring_project1.domain.member.Controller;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,11 +55,9 @@ public class MemberControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("요청이 성공했습니다."))
                 .andExpect(jsonPath("$.content").exists())
-                .andExpect(jsonPath("$.content.item").exists())
-                .andExpect(jsonPath("$.content.item.id").value(member.getId()))
-                .andExpect(jsonPath("$.content.item.createDate").value(Matchers.startsWith(member.getCreateDate().toString().substring(0, 23))))
-                .andExpect(jsonPath("$.content.item.modifyDate").value(Matchers.startsWith(member.getModifyDate().toString().substring(0, 23))))
-                .andExpect(jsonPath("$.content.apiKey").value(member.getApiKey()));
+                .andExpect(jsonPath("$.content.username").value(member.getUsername()))
+                .andExpect(jsonPath("$.content.apiKey").value(member.getApiKey()))
+                .andExpect(jsonPath("$.content.accessToken").exists());
     }
 
     @Test

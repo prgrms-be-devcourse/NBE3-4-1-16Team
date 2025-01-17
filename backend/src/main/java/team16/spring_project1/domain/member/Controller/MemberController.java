@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import team16.spring_project1.domain.member.DTO.MemberDto;
 import team16.spring_project1.domain.member.Entity.Member;
 import team16.spring_project1.domain.member.Service.MemberService;
 import team16.spring_project1.global.apiResponse.ApiResponse;
@@ -37,7 +36,7 @@ public class MemberController {
 
     record MemberLoginResBody(
             @NonNull
-            MemberDto item,
+            String username,
             @NonNull
             String apiKey,
             @NonNull
@@ -46,7 +45,7 @@ public class MemberController {
 
     @PostMapping("/login")
     @Transactional(readOnly = true)
-    @Operation(summary = "로그인", description = "apiKey, accessToken을 발급합니다. 해당 토큰들은 쿠키(HTTP-ONLY)로도 전달됩니다.")
+    @Operation(summary = "User Login", description = "apiKey, accessToken을 발급합니다. 해당 토큰들은 쿠키(HTTP-ONLY)로도 전달됩니다.")
     public ResponseEntity<ApiResponse<MemberLoginResBody>> login(
             @RequestBody @Valid MemberLoginReqBody reqBody
     ) {
@@ -57,16 +56,16 @@ public class MemberController {
         if(!member.matchPassword(reqBody.password))
             throw new PasswordMismatchException("비밀번호가 일치하지 않습니다.");
 
-        //String accessToken = memberService.getAccessToken(member);
+        String accessToken = memberService.getAccessToken(member);
 
         //rq.setCookie("accessToken", accessToken);
        // rq.setCookie("apiKey", member.getApiKey());
 
         return ResponseEntity.ok(ApiResponse.success(
                 new MemberLoginResBody(
-                        new MemberDto(member),
+                        member.getUsername(),
                         member.getApiKey(),
-                        ""
+                        accessToken
                 )
         ));
     }
