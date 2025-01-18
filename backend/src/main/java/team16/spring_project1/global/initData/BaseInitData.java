@@ -176,6 +176,11 @@ public class BaseInitData {
                 "admin",
                 "1234"
         );
+
+        Member user1 = memberService.join(
+                "user1",
+                "1234"
+        );
     }
 
 }

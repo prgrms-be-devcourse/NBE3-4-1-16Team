@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import team16.spring_project1.domain.member.Entity.Member;
 import team16.spring_project1.domain.member.Service.MemberService;
 import team16.spring_project1.global.apiResponse.ApiResponse;
@@ -62,10 +59,33 @@ public class MemberController {
         rq.setCookie("apiKey", member.getApiKey());
 
         return ResponseEntity.ok(ApiResponse.success(
+                "로그인되었습니다.",
                 new MemberLoginResBody(
                         member.getApiKey(),
                         accessToken
                 )
         ));
+    }
+
+    @GetMapping("/username")
+    @Transactional(readOnly = true)
+    @Operation(summary = "Find Username", description = "사용자의 username을 조회합니다.")
+    public ResponseEntity<ApiResponse<String>> findUsername() {
+        Member member = rq.getMember();
+
+        if(member == null)
+            throw new NullPointerException("존재하지 않는 사용자입니다.");
+
+        return ResponseEntity.ok(ApiResponse.success(member.getUsername()));
+    }
+
+    @DeleteMapping("/logout")
+    @Transactional(readOnly = true)
+    @Operation(summary = "User Logout", description = "apiKey, accessToken을 제거합니다.")
+    public ResponseEntity<ApiResponse<String>> logout() {
+        rq.deleteCookie("accessToken");
+        rq.deleteCookie("apiKey");
+
+        return ResponseEntity.ok(ApiResponse.success("로그아웃 되었습니다"));
     }
 }

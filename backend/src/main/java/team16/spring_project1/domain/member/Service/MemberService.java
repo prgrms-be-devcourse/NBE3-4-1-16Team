@@ -56,7 +56,6 @@ public class MemberService {
         if(payload == null) return null;
 
         long id = (long) payload.get("id");
-        String username = (String) payload.get("username");
         Member member = findById(id).get();
 
         return member;

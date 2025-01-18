@@ -1,7 +1,10 @@
 package team16.spring_project1.standard.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.SneakyThrows;
 
 import javax.crypto.SecretKey;
 import java.io.BufferedReader;
@@ -138,6 +141,16 @@ public class Ut {
     public static class str {
         public static boolean isBlank(String str) {
             return str == null || str.trim().isEmpty();
+        }
+    }
+
+    public static class json {
+        private static final ObjectMapper om = new ObjectMapper()
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
+        @SneakyThrows
+        public static String toString(Object obj) {
+            return om.writeValueAsString(obj);
         }
     }
 

@@ -11,6 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import team16.spring_project1.domain.member.Entity.Member;
+import team16.spring_project1.domain.member.Service.MemberService;
 import team16.spring_project1.domain.product.product.Service.ProductService;
 import team16.spring_project1.domain.product.product.entity.Product;
 import team16.spring_project1.global.enums.SearchKeywordType;
@@ -32,12 +34,18 @@ public class ProductControllerTest {
     private MockMvc mvc;
     @Autowired
     private ProductService productService;
+    @Autowired
+    MemberService memberService;
 
     @Test
     @DisplayName("상품 등록")
     void t1() throws Exception {
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
+
         ResultActions resultActions = mvc
                 .perform(post("/products")
+                        .header("Authorization", "Bearer " + memberAuthToken)
                         .content("""
                                 {
                                     "category": "테스트 카테고리",
@@ -69,8 +77,12 @@ public class ProductControllerTest {
     @Test
     @DisplayName("상품 등록, with no input")
     void t1_1() throws Exception {
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
+
         ResultActions resultActions = mvc
                 .perform(post("/products")
+                        .header("Authorization", "Bearer " + memberAuthToken)
                         .content("""
                                 {
                                     "category": "",
@@ -247,7 +259,11 @@ public class ProductControllerTest {
     @Test
     @DisplayName("상품 수정 성공")
     void t3_1() throws Exception {
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
+
         mvc.perform(put("/products/1")
+                        .header("Authorization", "Bearer " + memberAuthToken)
                         .content("""
                                 {
                                     "category": "수정된커피콩",
@@ -267,8 +283,11 @@ public class ProductControllerTest {
     @Test
     @DisplayName("상품 수정 실패")
     void t3_2() throws Exception {
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
 
         mvc.perform(put("/products/9999")
+                        .header("Authorization", "Bearer " + memberAuthToken)
                         .content("""
                                 {
                                     "category": "수정된커피콩",
@@ -326,25 +345,32 @@ public class ProductControllerTest {
     @Test
     @DisplayName("상품 삭제 성공")
     void t5_1() throws Exception {
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
 
-        mvc.perform(delete("/products/1"))
+        mvc.perform(delete("/products/1").header("Authorization", "Bearer " + memberAuthToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("상품이 성공적으로 삭제되었습니다."));
     }
     @Test
     @DisplayName("상품 삭제 실패 없는 번호")
     void t5_2() throws Exception {
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
 
-        mvc.perform(delete("/products/-1"))
+        mvc.perform(delete("/products/-1").header("Authorization", "Bearer " + memberAuthToken))
                 .andExpect(jsonPath("$.message").value("해당 상품은 이미 삭제되었거나 존재하지 않습니다."));
 
     }
     @Test
     @DisplayName("상품 삭제 실패 삭제된 상품")
     void t5_3() throws Exception {
-        mvc.perform(delete("/products/1"))
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
+
+        mvc.perform(delete("/products/1").header("Authorization", "Bearer " + memberAuthToken))
                 .andExpect(jsonPath("$.message").value("상품이 성공적으로 삭제되었습니다."));
-        mvc.perform(delete("/products/1"))
+        mvc.perform(delete("/products/1").header("Authorization", "Bearer " + memberAuthToken))
                 .andExpect(jsonPath("$.message").value("해당 상품은 이미 삭제되었거나 존재하지 않습니다."));
     }
 }

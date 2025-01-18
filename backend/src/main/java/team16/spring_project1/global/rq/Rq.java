@@ -41,6 +41,16 @@ public class Rq {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
+    public Member getMember() {
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                .map(Authentication::getPrincipal)
+                .filter(UserDetails.class::isInstance)
+                .map(UserDetails.class::cast)
+                .map(UserDetails::getUsername)
+                .flatMap(memberService::findByUsername)
+                .orElse(null);
+    }
+
     public void setHeader(String name, String value) {
         resp.setHeader(name, value);
     }
