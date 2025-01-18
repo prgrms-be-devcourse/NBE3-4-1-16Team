@@ -40,7 +40,7 @@ export default function ClientPage() {
     }
     alert(response.data.message)
 
-    router.replace('/admin/products')
+    window.location.replace('/admin/products')
   }
 
   return (
