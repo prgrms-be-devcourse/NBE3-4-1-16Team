@@ -1,4 +1,4 @@
-import type {Metadata} from 'next'
+import type { Metadata } from 'next'
 import '../globals.css'
 import Link from 'next/link'
 
@@ -17,7 +17,7 @@ export default function RootLayout({
         <h1 className="text-4xl font-extrabold align-middle">
           <Link href="/admin/products">
             Grids & Circles
-            <span className="text-sm text-gray-400 font-normal">ADMIN</span>
+            <span className="text-sm text-gray-400 font-normal"> ADMIN</span>
           </Link>
         </h1>
         <nav className="ml-auto flex gap-5 items-center">
@@ -35,7 +35,7 @@ export default function RootLayout({
           </Link>
         </nav>
       </header>
-      <main className="flex-grow p-5 bg-[#f5f5f5]">
+      <main className="flex-grow p-5 bg-[#f5f5f5] relative">
         <div className="max-w-[1800px] mx-auto">{children}</div>
       </main>
     </>
