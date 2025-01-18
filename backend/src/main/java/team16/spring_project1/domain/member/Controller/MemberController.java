@@ -16,6 +16,7 @@ import team16.spring_project1.domain.member.Entity.Member;
 import team16.spring_project1.domain.member.Service.MemberService;
 import team16.spring_project1.global.apiResponse.ApiResponse;
 import team16.spring_project1.global.exceptions.PasswordMismatchException;
+import team16.spring_project1.global.rq.Rq;
 
 import java.util.NoSuchElementException;
 
@@ -25,6 +26,7 @@ import java.util.NoSuchElementException;
 @Tag(name = "MemberController", description = "회원 관리 API")
 public class MemberController {
     private final MemberService memberService;
+    private final Rq rq;
 
     record MemberLoginReqBody(
             @NotBlank
@@ -35,8 +37,6 @@ public class MemberController {
     ) {}
 
     record MemberLoginResBody(
-            @NonNull
-            String username,
             @NonNull
             String apiKey,
             @NonNull
@@ -58,12 +58,11 @@ public class MemberController {
 
         String accessToken = memberService.getAccessToken(member);
 
-        //rq.setCookie("accessToken", accessToken);
-       // rq.setCookie("apiKey", member.getApiKey());
+        rq.setCookie("accessToken", accessToken);
+        rq.setCookie("apiKey", member.getApiKey());
 
         return ResponseEntity.ok(ApiResponse.success(
                 new MemberLoginResBody(
-                        member.getUsername(),
                         member.getApiKey(),
                         accessToken
                 )

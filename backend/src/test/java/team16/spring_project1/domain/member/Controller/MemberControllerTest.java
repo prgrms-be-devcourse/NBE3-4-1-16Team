@@ -55,7 +55,6 @@ public class MemberControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("요청이 성공했습니다."))
                 .andExpect(jsonPath("$.content").exists())
-                .andExpect(jsonPath("$.content.username").value(member.getUsername()))
                 .andExpect(jsonPath("$.content.apiKey").value(member.getApiKey()))
                 .andExpect(jsonPath("$.content.accessToken").exists());
     }

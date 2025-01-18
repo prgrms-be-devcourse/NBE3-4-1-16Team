@@ -3,6 +3,7 @@ package team16.spring_project1.global.rq;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import team16.spring_project1.domain.member.Entity.Member;
 import team16.spring_project1.domain.member.Service.MemberService;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 @RequestScope
 @Component
@@ -43,5 +47,41 @@ public class Rq {
 
     public String getHeader(String name) {
         return req.getHeader(name);
+    }
+
+    public void setCookie(String name, String value) {
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .path("/")
+                .domain("localhost")
+                .sameSite("Strict")
+                .secure(true)
+                .httpOnly(true)
+                .build();
+
+        resp.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    public String getCookieValue(String name) {
+        return Optional
+                .ofNullable(req.getCookies())
+                .stream() // 1 ~ 0
+                .flatMap(cookies -> Arrays.stream(cookies))
+                .filter(cookie -> cookie.getName().equals(name))
+                .map(cookie -> cookie.getValue())
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void deleteCookie(String name) {
+        ResponseCookie cookie = ResponseCookie.from(name, null)
+                .path("/")
+                .domain("localhost")
+                .sameSite("Strict")
+                .secure(true)
+                .httpOnly(true)
+                .maxAge(0)
+                .build();
+
+        resp.addHeader("Set-Cookie", cookie.toString());
     }
 }
