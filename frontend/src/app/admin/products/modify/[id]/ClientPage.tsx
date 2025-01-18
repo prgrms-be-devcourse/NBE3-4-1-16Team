@@ -1,8 +1,9 @@
 'use client'
-
+import React, { useState } from 'react';
 import type { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
+import axios from 'axios';
 
 export default function ClientPage({
   id,
@@ -11,7 +12,40 @@ export default function ClientPage({
   id: string
   responseBody: components['schemas']['ApiResponseProductDto']
 }) {
+  const [file, setFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const baseDir = "http://localhost:8080/";
   const router = useRouter()
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setFile(e.target.files[0]);
+        }
+    };
+    const handleSubmitImage = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!file) {
+            alert('파일을 선택해주세요.');
+            return;
+        }
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const response = await axios.post('http://localhost:8080/products/image', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            if (response.status === 200) {
+                alert('이미지가 성공적으로 업로드되었습니다.');
+                setImageUrl(`${baseDir}${response.data.message}`);
+            } else {
+                setMessage(`업로드에 실패했습니다. ${response.statusText}`);
+            }
+        } catch (error) {
+            console.error('업로드 중 오류 발생:', error);
+        }
+
+    };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     let url
@@ -31,12 +65,12 @@ export default function ClientPage({
       form.price.focus()
       return
     }
-    if (form.imageUrl.value.length === 0) {
-      url=
-        "https://res.cloudinary.com/heyset/image/upload/v1689582418/buukmenow-folder/no-image-icon-0.jpg"
-    }
-  else
-      url = form.imageUrl.value;
+      if (imageUrl === null) {
+        url = "https://res.cloudinary.com/heyset/image/upload/v1689582418/buukmenow-folder/no-image-icon-0.jpg";
+      }
+    else{
+         url = imageUrl;
+      }
     const response = await client.PUT('/products/{id}', {
       params: {
         path: {
@@ -120,14 +154,23 @@ export default function ClientPage({
                   <label htmlFor="imageUrl">이미지</label>
                 </th>
                 <td className="p-5">
-                  <input
-                    type="text"
-                    name="imageUrl"
-                    id="imageUrl"
-                    className="p-2 h-[50px] w-full border-[1px] border-[#ddd]"
-                    defaultValue={responseBody.content?.imageUrl}
-                    placeholder="이미지"
-                  />
+                      <input
+                          type="file"
+                          className="form-control"
+                          id="imageFile"
+                          name="file"
+                          onChange={handleFileChange}
+                      />
+
+                      <button
+                          className="btn btn-primary"
+                          onClick={handleSubmitImage}
+                          className="w-[150px] h-[50px] bg-[#59473F] text-white rounded-[8px] h-[40px]">
+                          업로드
+                      </button>
+                      {imageUrl ? (
+                      <img src={`${imageUrl}`} alt="Uploaded" style={{ maxWidth: '100%', maxHeight: '300px' }} />):
+                      (<img src={`${responseBody.content?.imageUrl}`} alt="Uploaded" style={{ maxWidth: '100%', maxHeight: '300px' }} />)}
                 </td>
               </tr>
             </tbody>
