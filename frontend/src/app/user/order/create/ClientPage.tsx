@@ -2,6 +2,7 @@
 
 import type {components} from '@/lib/backend/apiV1/schema';
 import React, {useState} from 'react';
+import Cookies from 'js-cookie';
 
 export default function ClientPage({
                                        responseBody,
@@ -18,6 +19,31 @@ export default function ClientPage({
             newCounts[index] = value > 0 ? value : 1; // 최소값 1
             return newCounts;
         });
+    };
+
+    const handleAddToCart = (product, count) => {
+        const cart = Cookies.get('cart')
+        const cartItems = cart ? JSON.parse(cart) : [];
+
+        // 기존 상품이 이미 있는지 확인
+        const existingIndex = cartItems.findIndex(item => item.productName === product.productName);
+
+        if (existingIndex !== -1) {
+            // 기존 상품 수량 업데이트
+            cartItems[existingIndex].count += count;
+        } else {
+            // 새 상품 추가
+            cartItems.push({
+                productName: product.productName,
+                price: product.price,
+                imageUrl: product.imageUrl,
+                category: product.category,
+                count,
+            });
+        }
+
+        Cookies.set('cart', JSON.stringify(cartItems), { expires: 1 }); // 쿠키에 저장 (1일)
+        alert(`${product.productName} ${count}개가 장바구니에 추가되었습니다.`);
     };
 
     return (
@@ -74,10 +100,7 @@ export default function ClientPage({
                                 {/* 추가 버튼 */}
                                 <button
                                     className="h-10 py-2 px-3 bg-white border border-gray-300 rounded-md hover:bg-gray-200 cursor-pointer"
-                                    onClick={() => {
-                                        console.log({...product, count: counts[index],});
-                                        alert(`${product.productName} ${counts[index]}개가 장바구니에 추가되었습니다`);
-                                    }}
+                                    onClick={() => handleAddToCart(product, counts[index])}
                                 >
                                     추가
                                 </button>

@@ -2,8 +2,18 @@
 
 import type {components} from '@/lib/backend/apiV1/schema';
 import React from 'react';
+// @ts-ignore
+import Cookies from 'js-cookie';
 import client from "@/lib/backend/client";
 import {useRouter} from "next/navigation";
+
+type CartItem = {
+    productName: string;
+    price: number;
+    imageUrl: string;
+    category: string;
+    count: number;
+};
 
 export default function ClientPage({
                                        responseBody,
@@ -13,8 +23,17 @@ export default function ClientPage({
     counts: number[];
 }) {
     const router = useRouter()
-    const products = responseBody.content ?? []; // 비어있을 경우 기본 값 []
-    const totalPrice = products.reduce((total, product, index) => total + counts[index] * product.price, 0);
+    const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
+
+    React.useEffect(() => {
+        const cart = Cookies.get('cart');
+        setCartItems(cart ? JSON.parse(cart) : []);
+    }, []);
+
+    const totalPrice = cartItems.reduce(
+        (total: number, item: { count: number; price: number }) => total + item.count * item.price,
+        0
+    );
 
     const handlePayment = async () => {
         const emailInput = document.getElementById("email") as HTMLInputElement;
@@ -33,30 +52,34 @@ export default function ClientPage({
             return;
         }
 
+        const cart = Cookies.get('cart');
+        const cartItems = cart ? JSON.parse(cart) : [];
+
         const requestBody = {
             body: {
                 email,
                 totalPrice: totalPrice,
-                orderItems: products.map((product, index) => ({
-                    productName: product.productName,
-                    count: counts[index],
-                    price: product.price,
+                orderItems: cartItems.map((item: { productName: string; count: number; price: number }) => ({
+                    productName: item.productName,
+                    count: item.count,
+                    price: item.price,
                 })),
             },
         };
 
 
         try {
-            const response = await client.POST("/order", requestBody ?? []);
+            // @ts-ignore
+            const response = await client.POST("/order", requestBody);
 
-            if(response.data?.success) {
+            if (response.data?.success) {
                 alert("결제에 성공했습니다.");
+                Cookies.remove('cart'); // 결제 성공 시 장바구니 초기화
                 router.push('/user');
             } else {
                 alert(response.error?.message);
             }
         } catch (error) {
-            console.log(error);
             alert("결제에 실패했습니다.")
         }
 
@@ -71,9 +94,9 @@ export default function ClientPage({
             <div className="flex">
                 {/* 왼쪽: 상품 목록 */}
                 <div className="w-1/2 border-2 border-gray-300 rounded-lg shadow-md p-5 mr-4">
-                    {products.length > 0 ? (
+                    {cartItems.length > 0 ? (
                         <ul className="list-none p-0">
-                            {products.map((product, index) => (
+                            {cartItems.map((item, index) => (
 
                                 <li
                                     key={index}
@@ -82,35 +105,36 @@ export default function ClientPage({
 
                                     {/* 이미지 */}
                                     <img
-                                        src={product.imageUrl}
-                                        alt={product.productName}
+                                        src={item.imageUrl}
+                                        alt={item.productName}
                                         className="w-20 h-20 object-cover mr-3 rounded-md"
                                     />
 
                                     {/* 상품 정보 */}
                                     <div className="flex-1">
                                         <h2 className="text-sm font-semibold m-0">
-                                            {product.productName.length > 40
-                                                ? product.productName.slice(0, 40) + "..."
-                                                : product.productName}
+                                            {item.productName.length > 40
+                                                ? item.productName.slice(0, 40) + "..."
+                                                : item.productName}
                                         </h2>
 
                                         {/* 가격 */}
-                                        <p className="text-sm my-1"> {product.price}원 </p>
+                                        <p className="text-sm my-1"> {item.price}원 </p>
 
                                         {/* 카테고리 */}
                                         <p className="inline-block text-xs font-bold text-white bg-coffee py-1 px-2 rounded-md mt-1">
-                                            {product.category}
+                                            {item.category}
                                         </p>
                                     </div>
 
+                                    {/* 개수 */}
                                     <div className="flex items-center justify-end w-32">
-                                        <span className="text-base font-medium">{counts[index]} 개</span>
+                                        <span className="text-base font-medium">{item.count} 개</span>
                                     </div>
 
-                                    {/* 총 가격 */}
+                                    {/* 총 가격*/}
                                     <div className="flex items-center justify-end w-40">
-                                        <span className="text-base font-bold">{counts[index] * product.price} 원</span>
+                                        <span className="text-base font-bold">{item.count * item.price} 원</span>
                                     </div>
 
                                 </li>

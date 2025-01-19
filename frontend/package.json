@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "js-cookie": "^3.0.5",
     "next": "15.1.4",
     "openapi-fetch": "^0.13.4",
     "react": "^19.0.0",
