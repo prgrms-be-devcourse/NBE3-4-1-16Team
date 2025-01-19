@@ -29,10 +29,10 @@ export default function ClientLayout({
     <>
       <header className="border-[#ccc] border-b p-5 flex bg-white">
         <h1 className="text-4xl font-extrabold align-middle">
-          <Link href="/main">Grids & Circles</Link>
-          <Link href="/admin/products">
+          <a href="/main">Grids & Circles</a>
+          <a href="/admin/products">
             <span className="text-sm text-gray-400 font-normal"> ADMIN</span>
-          </Link>
+          </a>
         </h1>
         <nav className="ml-auto flex gap-5 items-center">
           <Link

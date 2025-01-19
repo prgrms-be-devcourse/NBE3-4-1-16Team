@@ -2,8 +2,21 @@
 
 import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 export default function ClientPage() {
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const message = searchParams.get('message')
+    if (message) {
+      alert(message)
+
+      window.history.replaceState({}, '', '/admin')
+    }
+  }, [searchParams])
+
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
