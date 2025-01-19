@@ -1,5 +1,6 @@
 package team16.spring_project1.domain.product.product.Controller;
 
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import team16.spring_project1.domain.product.product.DTO.ProductDto;
 import team16.spring_project1.domain.product.product.DTO.ProductRequest;
 import team16.spring_project1.domain.product.product.Service.ProductService;
@@ -83,5 +85,18 @@ public class ProductController {
         );
         productService.delete(product);
         return ResponseEntity.ok(ApiResponse.success("상품이 성공적으로 삭제되었습니다."));
+    }
+
+    @Operation(summary = "Upload Image", description = "상품 이미지를 추가합니다.")
+    @PostMapping("/image")
+    @Transactional
+    public  ResponseEntity<ApiResponse<String>> upload(@RequestBody @RequestParam(value = "file",required = false)MultipartFile file) {
+
+        String imageUrl = productService.upload(file);
+        if(imageUrl.isEmpty())
+            throw  new NoSuchElementException("이미지 업로드에 실패했습니다.");
+
+
+        return ResponseEntity.ok(ApiResponse.success(imageUrl));
     }
 }
