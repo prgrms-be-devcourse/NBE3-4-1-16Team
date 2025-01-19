@@ -9,6 +9,16 @@ export default function ClientPage({ order }: { order: OrderResponseDTO }) {
     return <p>주문 데이터를 불러올 수 없습니다.</p>;
   }
 
+  const handleUpdateStatus = () => {
+    // 배송 상태 변경 로직 구현
+    alert('배송 상태 변경 클릭');
+  };
+
+  const handleDeleteOrder = () => {
+    // 삭제 로직 구현
+    alert('주문 삭제 클릭');
+  };
+
   return (
     <div style={{ padding: '20px', maxWidth: '700px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
       <h1 style={{ textAlign: 'left', color: '#333', marginBottom: '30px' }}>주문 상세 정보</h1>
@@ -21,7 +31,7 @@ export default function ClientPage({ order }: { order: OrderResponseDTO }) {
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
         marginBottom: '20px',
       }}>
-        <p><strong>주문 ID:</strong> {order.id}</p>
+        <p><strong>주문 ID: </strong>{order.id}</p>
         <p><strong>주문 일자: </strong>
           {
             new Date(order.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
@@ -36,8 +46,8 @@ export default function ClientPage({ order }: { order: OrderResponseDTO }) {
             new Date(order.modifiedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }).replace('AM', '').replace('PM', '') // 14시 25분 형태로 출력
           }
         </p>
-        <p><strong>주문 금액:</strong> {order.totalPrice.toLocaleString()}원</p>
-        <p><strong>배송 상태:</strong> {
+        <p><strong>주문 금액: </strong>{order.totalPrice.toLocaleString()}원</p>
+        <p><strong>배송 상태: </strong>{
                             {
                               UNKNOWN: "알 수 없음",
                               CANCELLED: "취소",
@@ -74,8 +84,40 @@ export default function ClientPage({ order }: { order: OrderResponseDTO }) {
         <p>주문 상품이 없습니다.</p>
       )}
 
-      {/* 돌아가기 버튼 */}
+      {/* 버튼들 */}
       <div style={{ marginTop: '30px', textAlign: 'center' }}>
+        <button
+          onClick={handleUpdateStatus}
+          style={{
+            padding: '12px 25px',
+            backgroundColor: '#f39c12',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            marginRight: '10px', // 버튼 간 간격 조정
+          }}
+        >
+          배송 상태 변경
+        </button>
+        <button
+          onClick={handleDeleteOrder}
+          style={{
+            padding: '12px 25px',
+            backgroundColor: '#e74c3c',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            marginRight: '10px', // 버튼 간 간격 조정
+          }}
+        >
+          삭제
+        </button>
         <button
           onClick={() => window.history.back()}
           style={{

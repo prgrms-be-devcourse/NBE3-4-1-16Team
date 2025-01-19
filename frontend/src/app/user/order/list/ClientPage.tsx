@@ -93,7 +93,7 @@ export default function ClientPage() {
                     {
                       UNKNOWN: "알 수 없음",
                       CANCELLED: "취소",
-                      PAYMENT_COMPLETE: "결제 완료",
+                      PAYMENT_COMPLETED: "결제 완료",
                       PREPARING: "배송 준비",
                       SHIPPING: "배송 중",
                       COMPLETED: "배송 완료",

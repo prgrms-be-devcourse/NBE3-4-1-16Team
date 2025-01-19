@@ -28,7 +28,7 @@ export default function RootLayout({
             제품 등록
           </Link>
           <Link
-            href="#"
+            href="/admin/order/list"
             className="align-middle block text-lg text-gray-800 font-semibold"
           >
             주문 확인
