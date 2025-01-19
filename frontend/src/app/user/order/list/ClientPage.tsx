@@ -15,6 +15,9 @@ export default function ClientPage() {
   const [orders, setOrders] = useState<OrderResponseDTO[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const itemsPerPage = 3;
 
   const getOrdersByEmail = async () => {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -26,6 +29,7 @@ export default function ClientPage() {
     setLoading(true);
     setError(null);
     setOrders(null);
+    setCurrentPage(1); // 새로운 조회 시 페이지를 초기화
 
     try {
       const data = await client.GET(`/order/by-email?email=${encodeURIComponent(email)}`);
@@ -36,6 +40,14 @@ export default function ClientPage() {
       setLoading(false);
     }
   };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const paginatedOrders = orders ? orders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) : [];
+
+  const totalPages = orders ? Math.ceil(orders.length / itemsPerPage) : 0;
 
   return (
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
@@ -61,9 +73,9 @@ export default function ClientPage() {
       {orders && (
         <div>
           <h2>{orders.length}건의 주문 내역을 조회하였습니다.</h2>
-          {Array.isArray(orders) && orders.length > 0 ? (
+          {paginatedOrders.length > 0 ? (
             <ul style={{ listStyleType: 'none', padding: 0 }}>
-              {orders.map((order, index) => (
+              {paginatedOrders.map((order, index) => (
                 <li
                   key={index}
                   style={{
@@ -74,9 +86,19 @@ export default function ClientPage() {
                   }}
                 >
                   <p><strong>주문 ID:</strong> {order.id}</p>
+                  <p><strong>주문 일자:</strong> {new Date(order.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })}</p>
                   <p><strong>주문 내역:</strong> {order.orderItems[0].productName} 외 {order.orderItems.length - 1}건</p>
-                  <p><strong>주문 금액:</strong> {order.totalPrice}</p>
-                  <p><strong>배송 상태:</strong> {order.status}</p>
+                  <p><strong>주문 금액:</strong> {order.totalPrice.toLocaleString()}원</p>
+                  <p><strong>배송 상태:</strong> {
+                    {
+                      UNKNOWN: "알 수 없음",
+                      CANCELLED: "취소",
+                      PAYMENT_COMPLETE: "결제 완료",
+                      PREPARING: "배송 준비",
+                      SHIPPING: "배송 중",
+                      COMPLETED: "배송 완료",
+                    }[order.status] || "알 수 없음"
+                  }</p>
                   <div style={{ marginTop: '10px', textAlign: 'right' }}>
                     <Link
                       href={`/user/order/list/${order.id}`}
@@ -98,6 +120,27 @@ export default function ClientPage() {
             </ul>
           ) : (
             <p>주문이 존재하지 않습니다.</p>
+          )}
+
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  style={{
+                    padding: '5px 10px',
+                    margin: '0 5px',
+                    backgroundColor: currentPage === page ? '#0070f3' : '#fff',
+                    color: currentPage === page ? '#fff' : '#000',
+                    border: '1px solid #ddd',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
           )}
         </div>
       )}
