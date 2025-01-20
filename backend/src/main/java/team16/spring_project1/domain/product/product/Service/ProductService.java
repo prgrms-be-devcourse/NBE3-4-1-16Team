@@ -1,21 +1,7 @@
 package team16.spring_project1.domain.product.product.Service;
 
 
-
-
-import static team16.spring_project1.global.configuration.AppConfig.getImagesFolder;
-import static team16.spring_project1.global.configuration.AppConfig.getStaticDirectory;
-
 import jakarta.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
