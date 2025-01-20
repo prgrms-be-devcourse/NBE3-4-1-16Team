@@ -12,6 +12,17 @@ export default function ClientPage({
 }) {
   const router = useRouter()
 
+  const YourComponent = ({ input }: { input: string }) => {
+      const parts = input.split(",")
+      const year = parseInt(parts[0].trim()+parts[1].trim())
+      const month = (parseInt(parts[2].trim())).toString().padStart(2, '0');
+      const day = parseInt(parts[3].trim()).toString().padStart(2, '0');
+      var hour = parseInt(parts[4].trim()) >=12 ? parseInt(parts[4].trim())-12 : parseInt(parts[4].trim());
+      var after = hour >= 12 ? "오후" : "오전";
+      const minute = parseInt(parts[5].trim())
+      return `${year}. ${month}. ${day}.   ${after} ${hour}:${minute}`
+  }
+
   const handleDelete = async (productId: number) => {
     if (!confirm('정말로 삭제하시겠습니까?')) return
 
@@ -48,11 +59,11 @@ export default function ClientPage({
           </Link>
         </div>
 
-        <table className="table-fixed bg-white mt-3 w-full">
+        <table className="table-fixed bg-white mt-3">
           <colgroup>
             <col className="w-[80px]" />
             <col className="w-[180px]" />
-            <col width="" />
+            <col className="" />
             <col className="w-[150px]" />
             <col className="w-[100px]" />
             <col className="w-[130px]" />
@@ -61,7 +72,7 @@ export default function ClientPage({
           </colgroup>
           <thead className="text-center bg-[#59473F] text-white">
             <tr>
-              <th className="py-5">번호</th>
+              <th className="py-3">번호</th>
               <th>이미지</th>
               <th>제품명</th>
               <th>카테고리</th>
@@ -91,22 +102,10 @@ export default function ClientPage({
                 <td className="px-3">{item.category}</td>
                 <td className="px-3">{Number(item.price).toLocaleString()}</td>
                 <td className="px-3">
-                  {new Intl.DateTimeFormat('ko-KR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  }).format(new Date(item.createDate))}
+                  <YourComponent input={item.createDate.toLocaleString()} />
                 </td>
                 <td className="px-3">
-                  {new Intl.DateTimeFormat('ko-KR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  }).format(new Date(item.modifyDate))}
+                  <YourComponent input={item.modifyDate.toLocaleString()} />
                 </td>
                 <td>
                   <Link

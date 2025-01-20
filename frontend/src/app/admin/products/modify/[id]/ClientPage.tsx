@@ -66,7 +66,9 @@ export default function ClientPage({
       return
     }
       if (imageUrl === null) {
-        url = "https://res.cloudinary.com/heyset/image/upload/v1689582418/buukmenow-folder/no-image-icon-0.jpg";
+        if(responseBody.content?.imageUrl === null)
+           url = "https://res.cloudinary.com/heyset/image/upload/v1689582418/buukmenow-folder/no-image-icon-0.jpg";
+        url = responseBody.content?.imageUrl;
       }
     else{
          url = imageUrl;
