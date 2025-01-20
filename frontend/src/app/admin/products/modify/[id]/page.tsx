@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import client from '@/lib/backend/client'
 import ClientPage from './ClientPage'
-import { cookies } from "next/headers";
-import axios from 'axios';
+import { cookies } from 'next/headers'
+import axios from 'axios'
 export default async function Page({ params }: { params: { id: number } }) {
-  const { id } =  await params;
+  const { id } = await params
   const responseCategories = await client.GET('/products/categories')
 
   const responseBodyCategory = responseCategories.data!!
 
-  const response = await client.GET("/products/{id}", {
+  const response = await client.GET('/products/{id}', {
     params: {
       path: {
         id: Number(id),
@@ -18,15 +18,18 @@ export default async function Page({ params }: { params: { id: number } }) {
     headers: {
       cookie: (await cookies()).toString(),
     },
-  });
+  })
   if (response.error) {
-    return <>{response.error.message}</>;
+    return <>{response.error.message}</>
   }
-  const responseBody = response.data!!;
+  const responseBody = response.data!!
   return (
     <>
-
-      <ClientPage responseBody={responseBody} id={id} responseBodyCategory={responseBodyCategory} />
+      <ClientPage
+        responseBody={responseBody}
+        id={id.toString()}
+        responseBodyCategory={responseBodyCategory}
+      />
     </>
   )
 }
