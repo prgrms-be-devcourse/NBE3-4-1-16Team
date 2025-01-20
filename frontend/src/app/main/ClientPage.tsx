@@ -6,7 +6,7 @@ import Link from 'next/link'
 export default function ClientPage({
   responseBody,
 }: {
-  responseBody: components['schemas']['ApiResponseListProductDto']
+  responseBody: components['schemas']['ApiResponsePageDtoProductDto']
 }) {
   return (
     <>
@@ -15,7 +15,7 @@ export default function ClientPage({
           Products
         </h2>
         <ul className="grid grid-cols-4 gap-6">
-          {responseBody.content?.map((item) => (
+          {responseBody.content?.items.map((item) => (
             <li
               key={item.id}
               className="border-[1px] my-3 flex flex-col bg-white shadow-[0_0_10px_0_rgba(0,0,0,0.1)]"
