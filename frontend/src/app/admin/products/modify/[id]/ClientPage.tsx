@@ -155,6 +155,7 @@ export default function ClientPage({
                     name="categoryList"
                     id="categoryList"
                     onChange={handleCategoryListChange}
+                     defaultValue={responseBody.content?.category}
                     className="p-2 h-[50px] border-[1px] border-[#ddd]"
                   >
                     {responseBodyCategory.content?.map((item, index) => (
