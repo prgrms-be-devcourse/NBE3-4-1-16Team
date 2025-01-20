@@ -35,11 +35,9 @@ export default function ClientPage({
     const validateEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email) {
-            alert("이메일을 입력해주세요.");
             return false;
         }
         if (!emailRegex.test(email)) {
-            alert("유효한 이메일 주소를 입력해주세요.");
             return false;
         }
         return true;
