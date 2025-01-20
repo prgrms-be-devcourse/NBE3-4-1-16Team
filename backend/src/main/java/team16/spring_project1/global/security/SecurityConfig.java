@@ -26,7 +26,7 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/h2-console/**")
                                 .permitAll()
-                                .requestMatchers(HttpMethod.POST, "/products", "/order")
+                                .requestMatchers(HttpMethod.POST, "/products")
                                 .hasRole("ADMIN")
                                 //.requestMatchers(HttpMethod.GET, "/order")
                                 //.hasRole("ADMIN")
