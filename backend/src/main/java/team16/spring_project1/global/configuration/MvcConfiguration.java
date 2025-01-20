@@ -18,10 +18,9 @@ public class MvcConfiguration implements WebMvcConfigurer {
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    String projectPath = System.getProperty("user.dir");
     registry
         .addResourceHandler("/**")
-        .addResourceLocations("file:"+projectPath+getStaticDirectory());
+        .addResourceLocations("file:"+getStaticDirectory());
 
   }
 
