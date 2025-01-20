@@ -1,9 +1,10 @@
-import type {Metadata} from 'next'
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
 import '../globals.css'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Admin - Grids & Circles',
+  title: 'Grids & Circles',
 }
 
 export default function RootLayout({
@@ -15,21 +16,18 @@ export default function RootLayout({
     <>
       <header className="border-[#ccc] border-b p-5 flex bg-white">
         <h1 className="text-4xl font-extrabold align-middle">
-          <Link href="/admin/products">
-            Grids & Circles
-            <span className="text-sm text-gray-400 font-normal">ADMIN</span>
-          </Link>
+          <Link href="/main">Grids & Circles</Link>
         </h1>
         <nav className="ml-auto flex gap-5 items-center">
           <Link
-            href="/admin/products/create"
-            className="align-middle block text-lg text-gray-800 font-semibold"
+            href="#"
+            className="align-middle block text-xl text-gray-800 font-semibold"
           >
-            제품 등록
+            장바구니
           </Link>
           <Link
-            href="/admin/order/list"
-            className="align-middle block text-lg text-gray-800 font-semibold"
+            href="/user/order/list"
+            className="align-middle block text-xl text-gray-800 font-semibold"
           >
             주문 확인
           </Link>

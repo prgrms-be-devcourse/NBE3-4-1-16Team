@@ -29,8 +29,8 @@ public class Order extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    @Schema(description = "상품 상태", example = "PAYMENT_COMPLETED")
-    private DeliveryStatus status;
+    @Schema(description = "상품 상태, 기본 값으로 PAYMENT_COMPLETED 입니다.", example = "PAYMENT_COMPLETED", accessMode = Schema.AccessMode.READ_ONLY)
+    private DeliveryStatus status = DeliveryStatus.PAYMENT_COMPLETED;
 
     @Schema(description = "주문 금액", example = "1000")
     @NotNull

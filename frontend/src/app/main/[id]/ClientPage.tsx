@@ -22,16 +22,35 @@ export default function ClientPage({ order }: { order: OrderResponseDTO }) {
         marginBottom: '20px',
       }}>
         <p><strong>주문 ID:</strong> {order.id}</p>
-        <p><strong>주문 금액:</strong> {order.totalPrice.toLocaleString()} 원</p>
-        <p><strong>배송 상태:</strong>
-          <span style={{ fontWeight: 'bold', color: order.status === '배송 완료' ? '#28a745' : '#dc3545' }}>
-            {order.status}
-          </span>
+        <p><strong>주문 일자: </strong>
+          {
+            new Date(order.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
+            ' ' +
+            new Date(order.createdAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }).replace('AM', '').replace('PM', '') // 14시 25분 형태로 출력
+          }
         </p>
+        <p><strong>갱신 일자: </strong>
+          {
+            new Date(order.modifiedAt).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
+            ' ' +
+            new Date(order.modifiedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }).replace('AM', '').replace('PM', '') // 14시 25분 형태로 출력
+          }
+        </p>
+        <p><strong>주문 금액:</strong> {order.totalPrice.toLocaleString()}원</p>
+        <p><strong>배송 상태:</strong> {
+                            {
+                              UNKNOWN: "알 수 없음",
+                              CANCELLED: "취소",
+                              PAYMENT_COMPLETED: "결제 완료",
+                              PREPARING: "배송 준비",
+                              SHIPPING: "배송 중",
+                              COMPLETED: "배송 완료",
+                            }[order.status] || "알 수 없음"
+                          }</p>
       </div>
 
       {/* 주문 상품 목록 제목 */}
-      <h2 style={{ color: '#333', marginBottom: '20px', textAlign: 'left' }}>주문 상품 목록</h2>
+      <h2 style={{ color: '#333', marginBottom: '20px', textAlign: 'left' }}>주문 내역</h2>
 
       {/* 주문 상품 목록 섹션 */}
       {order.orderItems && order.orderItems.length > 0 ? (
@@ -46,8 +65,8 @@ export default function ClientPage({ order }: { order: OrderResponseDTO }) {
               boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
             }}>
               <p><strong>상품명:</strong> {item.productName}</p>
-              <p><strong>수량:</strong> {item.count}</p>
-              <p><strong>가격:</strong> {item.price.toLocaleString()} 원</p>
+              <p><strong>수량:</strong> {item.count}개</p>
+              <p><strong>가격:</strong> {item.price.toLocaleString()}원</p>
             </li>
           ))}
         </ul>

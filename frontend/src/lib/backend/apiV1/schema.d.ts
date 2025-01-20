@@ -327,11 +327,11 @@ export interface components {
              */
             email: string;
             /**
-             * @description 상품 상태
+             * @description 상품 상태, 기본 값으로 PAYMENT_COMPLETED 입니다.
              * @example PAYMENT_COMPLETED
              * @enum {string}
              */
-            status: "UNKNOWN" | "CANCELLED" | "PAYMENT_COMPLETED" | "PREPARING" | "SHIPPING" | "COMPLETED";
+            readonly status: "UNKNOWN" | "CANCELLED" | "PAYMENT_COMPLETED" | "PREPARING" | "SHIPPING" | "COMPLETED";
             /**
              * Format: int32
              * @description 주문 금액

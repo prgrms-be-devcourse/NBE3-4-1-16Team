@@ -37,12 +37,13 @@ spring:
         highlight_sql: true
         use_sql_comments: true
 springdoc:
-  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
   api-docs:
     enabled: true
-    swagger-ui:
-      enabled: true
-      path: /swagger-ui.html
+    path: /v3/api-docs
+  default-produces-media-type: application/json
 logging:
   level:
     org.hibernate.SQL: DEBUG
