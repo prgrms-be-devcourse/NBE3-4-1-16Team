@@ -18,10 +18,13 @@ export default function ClientPage({
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const baseDir = 'http://localhost:8080/'
   const router = useRouter()
-    const handleCategoryListChange = (event) => {
-      const selectBox = document.getElementById('category');
-      selectBox.value =event.target.value;
-    };
+  const handleCategoryListChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectBox = document.getElementById('category');
+    if(e.target.value === null)
+      selectBox.value = ""
+    else
+      selectBox.value =e.target.value;
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

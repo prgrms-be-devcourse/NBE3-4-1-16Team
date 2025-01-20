@@ -5,14 +5,14 @@ import { cookies } from "next/headers";
 import axios from 'axios';
 export default async function Page({ params }: { params: { id: number } }) {
   const { id } =  await params;
-    const responseCategories = await client.GET('/products/categories')
+  const responseCategories = await client.GET('/products/categories')
 
-    const responseBodyCategory = responseCategories.data!!
+  const responseBodyCategory = responseCategories.data!!
 
   const response = await client.GET("/products/{id}", {
     params: {
       path: {
-        id,
+        id: Number(id),
       },
     },
     headers: {
@@ -20,7 +20,7 @@ export default async function Page({ params }: { params: { id: number } }) {
     },
   });
   if (response.error) {
-    return <>{response.error.msg}</>;
+    return <>{response.error.message}</>;
   }
   const responseBody = response.data!!;
   return (
