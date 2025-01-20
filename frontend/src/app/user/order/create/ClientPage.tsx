@@ -9,14 +9,13 @@ export default function ClientPage({
                                    }: {
     responseBody: components['schemas']['ApiResponseListProductDto'];
 }) {
-    const products = responseBody.content ?? []; // 비어있을 경우 기본 값 []
-    const [counts, setCounts] = useState<number[]>(products.map(() => 1)); // 초기 수량을 1로 설정
+    const products = responseBody.content ?? []; // 기본값 설정
+    const [counts, setCounts] = useState<number[]>(products.map(() => 1)); // 초기 수량 설정
 
     const handleCountChange = (index: number, value: number) => {
         setCounts((prevCounts) => {
-            // prevCounts를 복사한 후, index의 값을 업데이트
             const newCounts = [...prevCounts];
-            newCounts[index] = value > 0 ? value : 1; // 최소값 1
+            newCounts[index] = Math.max(1, value); // 최소값 1
             return newCounts;
         });
     };
@@ -25,14 +24,14 @@ export default function ClientPage({
         const cart = Cookies.get('cart')
         const cartItems = cart ? JSON.parse(cart) : [];
 
-        // 기존 상품이 이미 있는지 확인
-        const existingIndex = cartItems.findIndex(item => item.productName === product.productName);
+        // 기존 상품 여부 확인 및 수량 업데이트
+        const existingIndex = cartItems.findIndex(
+            (item) => item.productName === product.productName
+        );
 
         if (existingIndex !== -1) {
-            // 기존 상품 수량 업데이트
             cartItems[existingIndex].count += count;
         } else {
-            // 새 상품 추가
             cartItems.push({
                 productName: product.productName,
                 price: product.price,
@@ -42,20 +41,19 @@ export default function ClientPage({
             });
         }
 
-        Cookies.set('cart', JSON.stringify(cartItems), { expires: 1 }); // 쿠키에 저장 (1일)
-        alert(`${product.productName} ${count}개가 장바구니에 추가되었습니다.`);
+        Cookies.set('cart', JSON.stringify(cartItems), {expires: 1}); // 1일 동안 저장
+        alert(`${product.productName}가 ${count}개 장바구니에 추가되었습니다.`);
     };
+
+    const options = Array.from({ length: 99 }, (_, i) => i + 1);
 
     return (
         <div>
-            <h1 className="text-2xl my-5 font-bold text-gray-800">
-                상품 목록
-            </h1>
+            <h1 className="text-2xl my-5 font-bold text-gray-800"> 상품 목록 </h1>
 
             {products.length > 0 ? (
                 <ul className="list-none p-0">
                     {products.map((product, index) => (
-
                         <li
                             key={index}
                             className="flex  p-4 border border-gray-300 rounded-lg bg-gray-100 shadow-md mb-4"
@@ -70,8 +68,14 @@ export default function ClientPage({
 
                             {/* 상품 정보 */}
                             <div style={{flex: 1}}>
+
+                                {/* 이름 */}
                                 <h2 className="text-base font-bold m-0">{product.productName}</h2>
-                                <p className="text-sm my-1">{product.price}원</p>
+
+                                {/* 가격 */}
+                                <p className="text-sm my-1">
+                                    {product.price.toLocaleString('ko-KR')}원
+                                </p>
 
                                 {/* 카테고리 */}
                                 <p className="inline-block text-xs font-bold text-white bg-coffee py-1 px-2 rounded-md mt-1">
@@ -85,16 +89,18 @@ export default function ClientPage({
                                     <label htmlFor={`count-${index}`} className="text-sm">
                                         수량:
                                     </label>
-                                    <input
+                                    <select
                                         id={`count-${index}`}
-                                        type="number"
                                         value={counts[index]}
-                                        min={1}
-                                        className="w-12 p-1 border border-gray-300 rounded-md text-center"
-                                        onChange={(e) =>
-                                            handleCountChange(index, parseInt(e.target.value, 10))  // 정수 변환
-                                        }
-                                    />
+                                        onChange={(e) => handleCountChange(index, parseInt(e.target.value, 10))}
+                                        className="p-1 border border-gray-300 rounded-md"
+                                    >
+                                        {options.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 {/* 추가 버튼 */}
