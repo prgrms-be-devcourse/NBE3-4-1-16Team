@@ -160,8 +160,9 @@ export default function ClientPage({
                   {product.productName}
                 </div>
                 {/* 가격 */}
-                <div className="w-full justify-self-end text-3xl font-extrabold text-[#59473F]">
-                  {product.price.toLocaleString('ko-KR')}원
+                <div className="w-full mb-2 justify-self-end text-3xl font-extrabold text-[#59473F]">
+                  {product.price.toLocaleString('ko-KR')}
+                  <span className="text-2xl align-bottom">원</span>
                 </div>
                 <div className="mt-2 w-full justify-self-end relative">
                   {/* 수량 선택 */}
