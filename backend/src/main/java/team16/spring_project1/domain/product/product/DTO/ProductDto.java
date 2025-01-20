@@ -31,4 +31,7 @@ public class ProductDto {
         this.imageUrl = product.getImageUrl();
         this.category = product.getCategory();
     }
+    public ProductDto(String category) {
+        this.category = category;
+    }
 }

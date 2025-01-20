@@ -4,6 +4,7 @@ package team16.spring_project1.domain.product.product.Controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,12 @@ public class ProductController {
                 )
         ));
     }
-
+    @Operation(summary = "Get All Categories", description = "모든 카테고리를 가져옵니다.")
+    @GetMapping("/categories")
+    @Transactional
+    public  ResponseEntity<ApiResponse<List<ProductDto>>> categories() {
+        return ResponseEntity.ok(ApiResponse.success(productService.findAllCategory()));
+    }
     @Operation(summary = "Get Product by ID", description = "상품 ID를 기준으로 특정 상품을 가져옵니다.")
     @GetMapping("/{id}")
     @Transactional(readOnly = true)

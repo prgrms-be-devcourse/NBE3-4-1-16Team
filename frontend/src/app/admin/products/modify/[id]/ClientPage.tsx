@@ -8,14 +8,21 @@ import axios from 'axios'
 export default function ClientPage({
   id,
   responseBody,
+  responseBodyCategory
 }: {
   id: string
   responseBody: components['schemas']['ApiResponseProductDto']
+  responseBodyCategory: components['schemas']['ApiResponseListProductDto']
 }) {
   const [file, setFile] = useState<File | null>(null)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const baseDir = 'http://localhost:8080/'
   const router = useRouter()
+    const handleCategoryListChange = (event) => {
+      const selectBox = document.getElementById('category');
+      selectBox.value =event.target.value;
+    };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
@@ -46,6 +53,7 @@ export default function ClientPage({
       }
     }
   }
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -135,6 +143,16 @@ export default function ClientPage({
                     defaultValue={responseBody.content?.category}
                     placeholder="카테고리"
                   />
+                </td>
+
+                <td className="p-5">
+                    <select name="categoryList" id="categoryList" onChange = {handleCategoryListChange} className="p-2 h-[50px] border-[1px] border-[#ddd]">
+                              {responseBodyCategory.content?.map((item, index) => (
+                                  <option key={item.category} value={item.category}>
+                                    {item.category}
+                                  </option>
+                                ))}
+                    </select>
                 </td>
               </tr>
               <tr className="border-b border-[#eee]">
