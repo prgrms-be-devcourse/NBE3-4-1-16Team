@@ -36,13 +36,7 @@ export default function ClientLayout({
         </h1>
         <nav className="ml-auto flex gap-5 items-center">
           <Link
-            href="/admin/products/create"
-            className="align-middle block text-lg text-gray-800 font-semibold"
-          >
-            제품 등록
-          </Link>
-          <Link
-            href="#"
+            href="/admin/order/list"
             className="align-middle block text-lg text-gray-800 font-semibold"
           >
             주문 확인
