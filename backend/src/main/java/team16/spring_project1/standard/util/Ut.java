@@ -1,5 +1,8 @@
 package team16.spring_project1.standard.util;
 
+import static team16.spring_project1.global.enums.OsType.MAC;
+import static team16.spring_project1.global.enums.OsType.WIN;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.jsonwebtoken.Jwts;
@@ -20,6 +23,7 @@ import java.nio.file.Path;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import team16.spring_project1.global.enums.OsType;
 
 public class Ut {
     public static class file {
@@ -199,6 +203,17 @@ public class Ut {
                         .getPayload();
             } catch (Exception e) {
                 return null;
+            }
+        }
+        public static OsType getOs() {
+            String os = System.getProperty("os.name").toLowerCase();
+
+            if (os.contains("win")) {
+                return OsType.WIN;
+            } else if (os.contains("mac")) {
+                return OsType.MAC;
+            } else {
+                return OsType.UNKNOWN; // 기본값 처리
             }
         }
     }

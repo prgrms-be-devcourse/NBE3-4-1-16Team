@@ -31,7 +31,7 @@ export default function ClientPage({
       parseInt(parts[4].trim()) >= 12
         ? parseInt(parts[4].trim()) - 12
         : parseInt(parts[4].trim())
-    var after = hour >= 12 ? '오후' : '오전'
+    var after = parts[4].trim() >= 12 ? '오후' : '오전'
     const minute = parseInt(parts[5].trim())
     return `${year}. ${month}. ${day}.   ${after} ${hour}:${minute}`
   }
