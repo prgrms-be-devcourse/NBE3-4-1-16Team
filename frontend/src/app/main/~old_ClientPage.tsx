@@ -30,7 +30,7 @@ export default function old_ClientPage({
                 className="border-[#eee] border-b"
               ></div>
               <div className="p-3 flex-grow grid grid-rows-[auto_1fr_auto_auto]">
-                <div className="text-sm text-[#59473F] font-bold">
+                <div className="text-sm text-[#59473F] font-bold text-white py-1 px-2 rounded-md">
                   {item.category}
                 </div>
                 <div className="my-2 justify-self-start">
