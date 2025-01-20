@@ -10,12 +10,14 @@ export default function ClientPage({
   searchKeywordType,
   page,
   pageSize,
+  responseBodyCategory,
   responseBody,
 }: {
   searchKeyword: string
   searchKeywordType: string
   page: number
   pageSize: number
+  responseBodyCategory: components['schemas']['ApiResponseListProductDto']
   responseBody: components['schemas']['ApiResponsePageDtoProductDto']
 }) {
   const router = useRouter()
@@ -77,23 +79,40 @@ export default function ClientPage({
   return (
     <>
       <div className="flex flex-col">
-        <h2 className="text-5xl font-extrabold mt-20 mb-10 text-center">
+        <h2 className="text-5xl font-extrabold mt-20 mb-12 text-center">
           Products
         </h2>
         <div className="flex justify-between">
-          <div className="flex">
+          <div className="flex items-center">
+            <label
+              htmlFor="category"
+              className="block mr-3 font-bold text-[#59473F]"
+            >
+              카테고리 검색
+            </label>
             <select
-              className="py-3 px-5 mr-3 block w-[200px] h-[50px] leading-[50px] border border-[#ddd] rounded-[8px]"
+              className="py-3 px-5 mr-8 block w-[200px] h-[50px] leading-[50px] border border-[#ddd] rounded-[8px]"
+              id="category"
               onChange={handleOnchange}
             >
               <option value="전체">전체</option>
-              <option value="커피콩">커피콩</option>
-              <option value="쥬스">쥬스</option>
+              {responseBodyCategory?.content?.map((item, index) => (
+                <option key={item.category} value={item.category}>
+                  {item.category}
+                </option>
+              ))}
             </select>
-            <form className="flex" onSubmit={handleSubmit}>
+            <form className="flex items-center" onSubmit={handleSubmit}>
+              <label
+                htmlFor="searchKeyword"
+                className="block mr-3 font-bold text-[#59473F]"
+              >
+                키워드 검색
+              </label>
               <input
                 type="text"
                 name="searchKeyword"
+                id="searchKeyword"
                 className="py-3 px-5 mr-3 block w-[250px] h-[50px] leading-[50px] border border-[#ddd] rounded-[8px]"
               />
               <button
@@ -104,12 +123,14 @@ export default function ClientPage({
               </button>
             </form>
           </div>
-          <Link
-            href="/admin/products/create"
-            className="h-[50px] leading-[50px] px-5 block bg-[#59473F] text-white rounded-[8px] item-end"
-          >
-            제품 등록
-          </Link>
+          <div className="flex">
+            <Link
+              href="/admin/products/create"
+              className="h-[50px] leading-[50px] px-5 block bg-[#59473F] text-white rounded-[8px] item-end"
+            >
+              제품 등록
+            </Link>
+          </div>
         </div>
 
         <table className="table-fixed bg-white mt-3 shadow-[0_0_10px_0_rgba(0,0,0,0.1)]">

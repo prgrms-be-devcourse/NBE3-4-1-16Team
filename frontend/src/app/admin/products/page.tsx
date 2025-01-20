@@ -29,6 +29,8 @@ export default async function Page({
     },
   })
 
+  const responseBodyCategory = await client.GET('/products/categories')
+
   const responseBody = response.data!!
 
   return (
@@ -38,6 +40,7 @@ export default async function Page({
         searchKeywordType={searchKeywordType}
         page={page}
         pageSize={pageSize}
+        responseBodyCategory={responseBodyCategory.data!!}
         responseBody={responseBody}
       />
     </>
