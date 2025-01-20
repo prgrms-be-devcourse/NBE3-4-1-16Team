@@ -3,13 +3,13 @@ import ClientPage from './ClientPage';
 
 export default async function Page() {
   try {
-    const response = await client.GET(`/order`);
+    const apiResponse = await client.GET(`/order`);
 
-    if (response.error) {
-      return <p>{response.error}</p>;
+    if (apiResponse.response.error) {
+      return <p>{apiResponse.response.error}</p>;
     }
 
-    return <ClientPage orders={response.data.content} />;
+    return <ClientPage orders={apiResponse.data.content} />;
   } catch (error: any) {
     return <p>{error.message || '알 수 없는 오류가 발생했습니다.'}</p>;
   }

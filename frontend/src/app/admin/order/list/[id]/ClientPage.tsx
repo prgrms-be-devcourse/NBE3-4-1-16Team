@@ -1,23 +1,74 @@
 'use client';
 
+import { useState } from 'react';
 import type { components } from '@/lib/backend/apiV1/schema';
+import client from '@/lib/backend/client';
 
 type OrderResponseDTO = components['schemas']['OrderResponseDTO'];
 
 export default function ClientPage({ order }: { order: OrderResponseDTO }) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState(order.status);
+
   if (!order) {
     return <p>주문 데이터를 불러올 수 없습니다.</p>;
   }
 
-  const handleUpdateStatus = () => {
-    // 배송 상태 변경 로직 구현
-    alert('배송 상태 변경 클릭');
+  const statusOptions = {
+    UNKNOWN: '알 수 없음',
+    CANCELLED: '취소',
+    PAYMENT_COMPLETED: '결제 완료',
+    PREPARING: '배송 준비',
+    SHIPPING: '배송 중',
+    COMPLETED: '배송 완료',
   };
 
-  const handleDeleteOrder = () => {
-    // 삭제 로직 구현
-    alert('주문 삭제 클릭');
+  const handleUpdateStatus = async () => {
+    if (isUpdating) return;
+
+    if (confirm(`배송 상태를 "${statusOptions[selectedStatus]}"(으)로 변경하시겠습니까?`)) {
+      setIsUpdating(true);
+
+      try {
+        const apiResponse = await client.PUT(`/order/${order.id}/status?status=${encodeURIComponent(selectedStatus)}`);
+        const response = apiResponse.response;
+        if (response.ok) {
+          alert('배송 상태가 성공적으로 변경되었습니다.');
+        } else {
+          alert(response.error || '배송 상태 변경에 실패했습니다.');
+        }
+        window.location.href = '/admin/order/list';
+      } catch (err) {
+        alert('오류가 발생했습니다. 다시 시도해주세요.');
+      } finally {
+        setIsUpdating(false);
+      }
+    }
   };
+
+  const handleDeleteOrder = async () => {
+    if (isDeleting) return; // 중복 클릭 방지
+
+    if (confirm('정말로 이 주문을 삭제하시겠습니까?')) {
+      setIsDeleting(true);
+
+        try {
+          const apiResponse = await client.DELETE(`/order/${order.id}`);
+          const response = apiResponse.response;
+          if (response.ok) {
+            alert('주문을 성공적으로 삭제했습니다.');
+          } else {
+            alert(response.error || '주문 삭제에 실패했습니다.');
+          }
+          window.location.href = '/admin/order/list';
+        } catch (err) {
+          setError(err.message || '알 수 없는 오류가 발생했습니다.');
+        } finally {
+          setIsDeleting(false);
+        }
+    }
+  }
 
   return (
     <div style={{ padding: '20px', maxWidth: '700px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
@@ -36,27 +87,36 @@ export default function ClientPage({ order }: { order: OrderResponseDTO }) {
           {
             new Date(order.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
             ' ' +
-            new Date(order.createdAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }).replace('AM', '').replace('PM', '') // 14시 25분 형태로 출력
+            new Date(order.createdAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }).replace('AM', '').replace('PM', '')
           }
         </p>
         <p><strong>갱신 일자: </strong>
           {
             new Date(order.modifiedAt).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
             ' ' +
-            new Date(order.modifiedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }).replace('AM', '').replace('PM', '') // 14시 25분 형태로 출력
+            new Date(order.modifiedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }).replace('AM', '').replace('PM', '')
           }
         </p>
         <p><strong>주문 금액: </strong>{order.totalPrice.toLocaleString()}원</p>
-        <p><strong>배송 상태: </strong>{
-                            {
-                              UNKNOWN: "알 수 없음",
-                              CANCELLED: "취소",
-                              PAYMENT_COMPLETED: "결제 완료",
-                              PREPARING: "배송 준비",
-                              SHIPPING: "배송 중",
-                              COMPLETED: "배송 완료",
-                            }[order.status] || "알 수 없음"
-                          }</p>
+        <p><strong>배송 상태: </strong>
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            style={{
+              padding: '8px',
+              fontSize: '14px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              backgroundColor: '#fff',
+            }}
+          >
+            {Object.entries(statusOptions).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </p>
       </div>
 
       {/* 주문 상품 목록 제목 */}
@@ -88,35 +148,37 @@ export default function ClientPage({ order }: { order: OrderResponseDTO }) {
       <div style={{ marginTop: '30px', textAlign: 'center' }}>
         <button
           onClick={handleUpdateStatus}
+          disabled={isUpdating}
           style={{
             padding: '12px 25px',
-            backgroundColor: '#f39c12',
+            backgroundColor: isUpdating ? '#ccc' : '#f39c12',
             color: '#fff',
             border: 'none',
             borderRadius: '5px',
-            cursor: 'pointer',
+            cursor: isUpdating ? 'not-allowed' : 'pointer',
             fontSize: '16px',
             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-            marginRight: '10px', // 버튼 간 간격 조정
+            marginRight: '10px',
           }}
         >
-          배송 상태 변경
+          {isUpdating ? '변경 중...' : '배송 상태 변경'}
         </button>
         <button
           onClick={handleDeleteOrder}
+          disabled={isDeleting}
           style={{
             padding: '12px 25px',
-            backgroundColor: '#e74c3c',
+            backgroundColor: isDeleting ? '#ccc' : '#e74c3c',
             color: '#fff',
             border: 'none',
             borderRadius: '5px',
-            cursor: 'pointer',
+            cursor: isDeleting ? 'not-allowed' : 'pointer',
             fontSize: '16px',
             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-            marginRight: '10px', // 버튼 간 간격 조정
+            marginRight: '10px',
           }}
         >
-          삭제
+          {isDeleting ? '삭제 중...' : '삭제'}
         </button>
         <button
           onClick={() => window.history.back()}
