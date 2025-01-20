@@ -4,6 +4,7 @@ package team16.spring_project1.domain.product.product.Controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -96,11 +97,10 @@ public class ProductController {
     @Transactional
     public  ResponseEntity<ApiResponse<String>> upload(@RequestBody @RequestParam(value = "file",required = false)MultipartFile file) {
 
-        String imageUrl = productService.upload(file);
-        if(imageUrl.isEmpty())
-            throw  new NoSuchElementException("이미지 업로드에 실패했습니다.");
+        Map<Boolean, String> response = productService.upload(file);
+        if(response.containsKey(false))
+            return  ResponseEntity.ok(ApiResponse.failure(response.get(false)));
 
-
-        return ResponseEntity.ok(ApiResponse.success(imageUrl));
+        return ResponseEntity.ok(ApiResponse.success(response.get(true)));
     }
 }
