@@ -76,6 +76,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/products/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Image
+         * @description 상품 이미지를 추가합니다.
+         */
+        post: operations["upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/order": {
         parameters: {
             query?: never;
@@ -94,6 +114,26 @@ export interface paths {
          * @description 새로운 주문을 생성합니다.
          */
         post: operations["createOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/products/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All Categories
+         * @description 모든 카테고리를 가져옵니다.
+         */
+        get: operations["categories"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -326,10 +366,21 @@ export interface components {
              */
             price: number;
         };
-        ApiResponseListProductDto: {
+        ApiResponsePageDtoProductDto: {
             success?: boolean;
             message?: string;
-            content?: components["schemas"]["ProductDto"][];
+            content?: components["schemas"]["PageDtoProductDto"];
+        };
+        PageDtoProductDto: {
+            /** Format: int64 */
+            totalItems: number;
+            items: components["schemas"]["ProductDto"][];
+            /** Format: int64 */
+            totalPages: number;
+            /** Format: int32 */
+            currentPageNumber: number;
+            /** Format: int32 */
+            pageSize: number;
         };
         ProductDto: {
             /** Format: int64 */
@@ -348,6 +399,11 @@ export interface components {
             success?: boolean;
             message?: string;
             content?: components["schemas"]["ProductDto"];
+        };
+        ApiResponseListProductDto: {
+            success?: boolean;
+            message?: string;
+            content?: components["schemas"]["ProductDto"][];
         };
         ApiResponseListOrderResponseDTO: {
             success?: boolean;
@@ -499,7 +555,12 @@ export interface operations {
     };
     items: {
         parameters: {
-            query?: never;
+            query?: {
+                searchKeywordType?: "productName" | "category";
+                searchKeyword?: string;
+                page?: number;
+                pageSize?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -512,7 +573,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseListProductDto"];
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponsePageDtoProductDto"];
                 };
             };
             /** @description Not Found */
@@ -536,6 +597,42 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["ProductRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+        };
+    };
+    upload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: binary */
+                    file?: string;
+                };
             };
         };
         responses: {
@@ -608,6 +705,35 @@ export interface operations {
                 };
                 content: {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseOrderResponseDTO"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+        };
+    };
+    categories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseListProductDto"];
                 };
             };
             /** @description Not Found */

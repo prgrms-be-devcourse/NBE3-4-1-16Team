@@ -1,17 +1,65 @@
 'use client'
-
+import React, { useState } from 'react'
 import type { components } from '@/lib/backend/apiV1/schema'
 import client from '@/lib/backend/client'
 import { useRouter } from 'next/navigation'
+import axios from 'axios'
 
 export default function ClientPage({
   id,
   responseBody,
+  responseBodyCategory,
 }: {
   id: string
   responseBody: components['schemas']['ApiResponseProductDto']
+  responseBodyCategory: components['schemas']['ApiResponseListProductDto']
 }) {
+  const [file, setFile] = useState<File | null>(null)
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const baseDir = 'http://localhost:8080/'
   const router = useRouter()
+  const handleCategoryListChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    const selectBox = document.getElementById('category') as HTMLInputElement
+    if (e.target.value === null) {
+      selectBox.value = ''
+    } else {
+      selectBox.value = e.target.value
+    }
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      const formData = new FormData()
+      formData.append('file', file)
+      try {
+        const response = await axios.post(
+          'http://localhost:8080/products/image',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        )
+        if (response.status === 200) {
+          if (response.data.success) {
+            alert(`이미지가 성공적으로 업로드되었습니다.`)
+            setImageUrl(`${baseDir}${response.data.message}`)
+          } else {
+            alert('지원하지않는 파일 형식입니다.')
+          }
+        } else {
+          alert('이미지 업로드 실패했습니다.')
+        }
+      } catch (error) {
+        alert(`업로드 중 오류 발생: ${error}`)
+      }
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     let url
@@ -31,12 +79,14 @@ export default function ClientPage({
       form.price.focus()
       return
     }
-    if (form.imageUrl.value.length === 0) {
-      url=
-        "https://res.cloudinary.com/heyset/image/upload/v1689582418/buukmenow-folder/no-image-icon-0.jpg"
+    if (imageUrl === null) {
+      if (responseBody.content?.imageUrl === null)
+        url =
+          'https://res.cloudinary.com/heyset/image/upload/v1689582418/buukmenow-folder/no-image-icon-0.jpg'
+      url = responseBody.content?.imageUrl
+    } else {
+      url = imageUrl
     }
-  else
-      url = form.imageUrl.value;
     const response = await client.PUT('/products/{id}', {
       params: {
         path: {
@@ -47,7 +97,7 @@ export default function ClientPage({
         productName: form.productName.value,
         category: form.category.value,
         price: form.price.value,
-        imageUrl: url
+        imageUrl: url,
       },
     })
     if (response.error) {
@@ -99,6 +149,23 @@ export default function ClientPage({
                     placeholder="카테고리"
                   />
                 </td>
+
+                <td className="p-5">
+                  <select
+                    name="categoryList"
+                    id="categoryList"
+                    onChange={handleCategoryListChange}
+                    className="p-2 h-[50px] border-[1px] border-[#ddd]"
+                  >
+                      <option key="nothing" value="nothing">
+                      </option>
+                    {responseBodyCategory.content?.map((item, index) => (
+                      <option key={item.category} value={item.category}>
+                        {item.category}
+                      </option>
+                    ))}
+                  </select>
+                </td>
               </tr>
               <tr className="border-b border-[#eee]">
                 <th className="bg-[#59473F] text-white">
@@ -121,13 +188,26 @@ export default function ClientPage({
                 </th>
                 <td className="p-5">
                   <input
-                    type="text"
-                    name="imageUrl"
-                    id="imageUrl"
-                    className="p-2 h-[50px] w-full border-[1px] border-[#ddd]"
-                    defaultValue={responseBody.content?.imageUrl}
-                    placeholder="이미지"
+                    type="file"
+                    className="form-control"
+                    id="imageFile"
+                    name="file"
+                    onChange={handleFileChange}
                   />
+
+                  {imageUrl ? (
+                    <img
+                      src={`${imageUrl}`}
+                      alt="Uploaded"
+                      style={{ maxWidth: '100%', maxHeight: '300px' }}
+                    />
+                  ) : (
+                    <img
+                      src={`${responseBody.content?.imageUrl}`}
+                      alt="Uploaded"
+                      style={{ maxWidth: '100%', maxHeight: '300px' }}
+                    />
+                  )}
                 </td>
               </tr>
             </tbody>

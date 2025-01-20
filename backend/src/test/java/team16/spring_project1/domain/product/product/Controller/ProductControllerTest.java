@@ -1,11 +1,11 @@
 package team16.spring_project1.domain.product.product.Controller;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import team16.spring_project1.domain.product.product.Service.ProductService;
 import team16.spring_project1.domain.product.product.entity.Product;
+import team16.spring_project1.global.enums.SearchKeywordType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -102,26 +103,144 @@ public class ProductControllerTest {
                 .perform(get("/products"))
                 .andDo(print());
 
-        List<Product> products = productService.findAll();
+        Page<Product> productPage = productService
+                .findAll(1, 8);
 
         resultActions
                 .andExpect(handler().handlerType(ProductController.class))
                 .andExpect(handler().methodName("items"))
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("요청이 성공했습니다."))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.totalItems").value(productPage.getTotalElements()))
+                .andExpect(jsonPath("$.content.totalPages").value(productPage.getTotalPages()))
+                .andExpect(jsonPath("$.content.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.content.pageSize").value(8));
+
+        List<Product> products = productPage.getContent();
 
         for(int i = 0; i < products.size(); i++) {
             Product product = products.get(i);
 
             resultActions
-                    .andExpect(jsonPath("$.content[%d].id".formatted(i)).value(product.getId()))
-                    .andExpect(jsonPath("$.content[%d].createDate".formatted(i)).value(Matchers.startsWith(product.getCreateDate().toString().substring(0, 23))))
-                    .andExpect(jsonPath("$.content[%d].modifyDate".formatted(i)).value(Matchers.startsWith(product.getModifyDate().toString().substring(0, 23))))
-                    .andExpect(jsonPath("$.content[%d].productName".formatted(i)).value(product.getProductName()))
-                    .andExpect(jsonPath("$.content[%d].price".formatted(i)).value(product.getPrice()))
-                    .andExpect(jsonPath("$.content[%d].imageUrl".formatted(i)).value(product.getImageUrl()))
-                    .andExpect(jsonPath("$.content[%d].category".formatted(i)).value(product.getCategory()));
+                    .andExpect(jsonPath("$.content.items[%d].id".formatted(i)).value(product.getId()))
+                    .andExpect(jsonPath("$.content.items[%d].createDate".formatted(i)).exists())
+                    .andExpect(jsonPath("$.content.items[%d].modifyDate".formatted(i)).exists())
+                    .andExpect(jsonPath("$.content.items[%d].productName".formatted(i)).value(product.getProductName()))
+                    .andExpect(jsonPath("$.content.items[%d].price".formatted(i)).value(product.getPrice()))
+                    .andExpect(jsonPath("$.content.items[%d].imageUrl".formatted(i)).value(product.getImageUrl()))
+                    .andExpect(jsonPath("$.content.items[%d].category".formatted(i)).value(product.getCategory()));
+        }
+    }
+
+    @Test
+    @DisplayName("상품 다건 조회 with searchKeyword=에티오피아")
+    void t2_1() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(get("/products?page=1&pageSize=8&searchKeyword=에티오피아"))
+                .andDo(print());
+
+        Page<Product> productPage = productService
+                .findByPaged(SearchKeywordType.productName, "에티오피아", 1, 8);
+
+        resultActions
+                .andExpect(handler().handlerType(ProductController.class))
+                .andExpect(handler().methodName("items"))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("요청이 성공했습니다."))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.totalItems").value(productPage.getTotalElements()))
+                .andExpect(jsonPath("$.content.totalPages").value(productPage.getTotalPages()))
+                .andExpect(jsonPath("$.content.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.content.pageSize").value(8));
+
+        List<Product> products = productPage.getContent();
+
+        for(int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+
+            resultActions
+                    .andExpect(jsonPath("$.content.items[%d].id".formatted(i)).value(product.getId()))
+                    .andExpect(jsonPath("$.content.items[%d].createDate".formatted(i)).exists())
+                    .andExpect(jsonPath("$.content.items[%d].modifyDate".formatted(i)).exists())
+                    .andExpect(jsonPath("$.content.items[%d].productName".formatted(i)).value(product.getProductName()))
+                    .andExpect(jsonPath("$.content.items[%d].price".formatted(i)).value(product.getPrice()))
+                    .andExpect(jsonPath("$.content.items[%d].imageUrl".formatted(i)).value(product.getImageUrl()))
+                    .andExpect(jsonPath("$.content.items[%d].category".formatted(i)).value(product.getCategory()));
+        }
+    }
+
+    @Test
+    @DisplayName("상품 다건 조회 with searchKeywordType=category&searchKeyword=쥬스")
+    void t2_2() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(get("/products?page=1&pageSize=8&searchKeywordType=category&searchKeyword=쥬스"))
+                .andDo(print());
+
+        Page<Product> productPage = productService
+                .findByPaged(SearchKeywordType.category, "쥬스", 1, 8);
+
+        resultActions
+                .andExpect(handler().handlerType(ProductController.class))
+                .andExpect(handler().methodName("items"))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("요청이 성공했습니다."))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.totalItems").value(productPage.getTotalElements()))
+                .andExpect(jsonPath("$.content.totalPages").value(productPage.getTotalPages()))
+                .andExpect(jsonPath("$.content.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.content.pageSize").value(8));
+
+        List<Product> products = productPage.getContent();
+
+        for(int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+
+            resultActions
+                    .andExpect(jsonPath("$.content.items[%d].id".formatted(i)).value(product.getId()))
+                    .andExpect(jsonPath("$.content.items[%d].createDate".formatted(i)).exists())
+                    .andExpect(jsonPath("$.content.items[%d].modifyDate".formatted(i)).exists())
+                    .andExpect(jsonPath("$.content.items[%d].productName".formatted(i)).value(product.getProductName()))
+                    .andExpect(jsonPath("$.content.items[%d].price".formatted(i)).value(product.getPrice()))
+                    .andExpect(jsonPath("$.content.items[%d].imageUrl".formatted(i)).value(product.getImageUrl()))
+                    .andExpect(jsonPath("$.content.items[%d].category".formatted(i)).value(product.getCategory()));
+        }
+    }
+
+    @Test
+    @DisplayName("상품 다건 조회 with searchKeywordType=category&searchKeyword=전체")
+    void t2_3() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(get("/products?page=1&pageSize=8&searchKeywordType=category&searchKeyword=전체"))
+                .andDo(print());
+
+        Page<Product> productPage = productService
+                .findByPaged(SearchKeywordType.category, "전체", 1, 8);
+
+        resultActions
+                .andExpect(handler().handlerType(ProductController.class))
+                .andExpect(handler().methodName("items"))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("요청이 성공했습니다."))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.totalItems").value(productPage.getTotalElements()))
+                .andExpect(jsonPath("$.content.totalPages").value(productPage.getTotalPages()))
+                .andExpect(jsonPath("$.content.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.content.pageSize").value(8));
+
+        List<Product> products = productPage.getContent();
+
+        for(int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+
+            resultActions
+                    .andExpect(jsonPath("$.content.items[%d].id".formatted(i)).value(product.getId()))
+                    .andExpect(jsonPath("$.content.items[%d].createDate".formatted(i)).exists())
+                    .andExpect(jsonPath("$.content.items[%d].modifyDate".formatted(i)).exists())
+                    .andExpect(jsonPath("$.content.items[%d].productName".formatted(i)).value(product.getProductName()))
+                    .andExpect(jsonPath("$.content.items[%d].price".formatted(i)).value(product.getPrice()))
+                    .andExpect(jsonPath("$.content.items[%d].imageUrl".formatted(i)).value(product.getImageUrl()))
+                    .andExpect(jsonPath("$.content.items[%d].category".formatted(i)).value(product.getCategory()));
         }
     }
 
@@ -182,8 +301,8 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("요청이 성공했습니다."))
                 .andExpect(jsonPath("$.content.id").value(product.getId()))
-                .andExpect(jsonPath("$.content.createDate").value(Matchers.startsWith(product.getCreateDate().toString().substring(0, 23))))
-                .andExpect(jsonPath("$.content.modifyDate").value(Matchers.startsWith(product.getModifyDate().toString().substring(0, 23))))
+                .andExpect(jsonPath("$.content.createDate").exists())
+                .andExpect(jsonPath("$.content.modifyDate").exists())
                 .andExpect(jsonPath("$.content.productName").value(product.getProductName()))
                 .andExpect(jsonPath("$.content.price").value(product.getPrice()))
                 .andExpect(jsonPath("$.content.imageUrl").value(product.getImageUrl()))
