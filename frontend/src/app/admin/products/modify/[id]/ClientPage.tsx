@@ -16,36 +16,29 @@ export default function ClientPage({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const baseDir = "http://localhost:8080/";
   const router = useRouter()
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setFile(e.target.files[0]);
-        }
-    };
-    const handleSubmitImage = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!file) {
-            alert('파일을 선택해주세요.');
-            return;
-        }
-        const formData = new FormData();
-        formData.append('file', file);
-        try {
-            const response = await axios.post('http://localhost:8080/products/image', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            if (response.status === 200) {
-                alert('이미지가 성공적으로 업로드되었습니다.');
-                setImageUrl(`${baseDir}${response.data.message}`);
-            } else {
-                setMessage(`업로드에 실패했습니다. ${response.statusText}`);
+            const file = e.target.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const response = await axios.post('http://localhost:8080/products/image', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                if (response.status === 200) {
+                    alert('이미지가 성공적으로 업로드되었습니다.');
+                    setImageUrl(`${baseDir}${response.data.message}`);
+                } else {
+                    alert('이미지 업로드 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('업로드 중 오류 발생:', error);
             }
-        } catch (error) {
-            console.error('업로드 중 오류 발생:', error);
         }
-
     };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     let url
@@ -164,12 +157,7 @@ export default function ClientPage({
                           onChange={handleFileChange}
                       />
 
-                      <button
-                          className="btn btn-primary"
-                          onClick={handleSubmitImage}
-                          className="w-[150px] h-[50px] bg-[#59473F] text-white rounded-[8px] h-[40px]">
-                          업로드
-                      </button>
+
                       {imageUrl ? (
                       <img src={`${imageUrl}`} alt="Uploaded" style={{ maxWidth: '100%', maxHeight: '300px' }} />):
                       (<img src={`${responseBody.content?.imageUrl}`} alt="Uploaded" style={{ maxWidth: '100%', maxHeight: '300px' }} />)}
