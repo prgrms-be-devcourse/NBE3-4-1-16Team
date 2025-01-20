@@ -9,7 +9,7 @@ export default function ClientPage({
                                    }: {
     responseBody: components['schemas']['ApiResponseListProductDto'];
 }) {
-    const products = responseBody.content ?? []; // 기본값 설정
+    const products = responseBody.content.items ?? []; // 기본값 설정
     const [counts, setCounts] = useState<number[]>(products.map(() => 1)); // 초기 수량 설정
 
     const handleCountChange = (index: number, value: number) => {

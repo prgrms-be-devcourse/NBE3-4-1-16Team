@@ -16,6 +16,21 @@ export default function ClientPage({ orders }: { orders: ApiResponseListOrderRes
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
 
+  // 시간 출력
+  const CustomTime = ({ input }: { input: string }) => {
+      const parts = input.split(',')
+      const year = parseInt(parts[0].trim() + parts[1].trim())
+      const month = parseInt(parts[2].trim()).toString().padStart(2, '0')
+      const day = parseInt(parts[3].trim()).toString().padStart(2, '0')
+      var hour =
+        parseInt(parts[4].trim()) >= 12
+          ? parseInt(parts[4].trim()) - 12
+          : parseInt(parts[4].trim())
+      var after = parts[4] >= 12 ? '오후' : '오전'
+      const minute = parseInt(parts[5].trim())
+      return `${year}. ${month}. ${day}.   ${after} ${hour}시 ${minute}분`
+  }
+
   // 주문 목록 필터링: 검색 기준에 맞게 주문 필터링
   const filteredOrders = orderList.filter((order) =>
     searchCriterion === 'id'
@@ -72,20 +87,8 @@ export default function ClientPage({ orders }: { orders: ApiResponseListOrderRes
               <tr key={order.id} style={{ textAlign: 'center', backgroundColor: '#fff' }}>
                 <td style={{ padding: '12px', border: '1px solid #ddd' }}>{order.id}</td>
                 <td style={{ padding: '12px', border: '1px solid #ddd' }}>{order.email}</td>
-                <td style={{ padding: '12px', border: '1px solid #ddd' }}>
-                  {
-                    new Date(order.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
-                    ' ' +
-                    new Date(order.createdAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }).replace('AM', '').replace('PM', '')
-                  }
-                </td>
-                <td style={{ padding: '12px', border: '1px solid #ddd' }}>
-                  {
-                    new Date(order.modifiedAt).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
-                    ' ' +
-                    new Date(order.modifiedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }).replace('AM', '').replace('PM', '')
-                  }
-                </td>
+                <td style={{ padding: '12px', border: '1px solid #ddd' }}><CustomTime input={order.createdAt.toLocaleString()}/></td>
+                <td style={{ padding: '12px', border: '1px solid #ddd' }}><CustomTime input={order.modifiedAt.toLocaleString()}/></td>
                 <td style={{ padding: '12px', border: '1px solid #ddd' }}>
                   {order.orderItems[0].productName.length > 8
                     ? order.orderItems[0].productName.substring(0, 8) + '...'

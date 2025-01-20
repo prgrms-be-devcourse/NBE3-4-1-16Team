@@ -19,6 +19,20 @@ export default function ClientPage() {
 
   const itemsPerPage = 3;
 
+  const CustomTime = ({ input }: { input: string }) => {
+      const parts = input.split(',')
+      const year = parseInt(parts[0].trim() + parts[1].trim())
+      const month = parseInt(parts[2].trim()).toString().padStart(2, '0')
+      const day = parseInt(parts[3].trim()).toString().padStart(2, '0')
+      var hour =
+        parseInt(parts[4].trim()) >= 12
+          ? parseInt(parts[4].trim()) - 12
+          : parseInt(parts[4].trim())
+      var after = parts[4] >= 12 ? '오후' : '오전'
+      const minute = parseInt(parts[5].trim())
+      return `${year}. ${month}. ${day}.   ${after} ${hour}시 ${minute}분`
+  }
+
   const getOrdersByEmail = async () => {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError('유효한 이메일을 입력해주세요.');
@@ -85,11 +99,11 @@ export default function ClientPage() {
                               borderRadius: '8px',
                             }}
                         >
-                          <p><strong>주문 ID:</strong> {order.id}</p>
-                          <p><strong>주문 일자:</strong> {new Date(order.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })}</p>
-                          <p><strong>주문 내역:</strong> {order.orderItems[0].productName} 외 {order.orderItems.length - 1}건</p>
-                          <p><strong>주문 금액:</strong> {order.totalPrice.toLocaleString()}원</p>
-                          <p><strong>배송 상태:</strong> {
+                          <p><strong>주문 ID: </strong>{order.id}</p>
+                          <p><strong>주문 일자: </strong><CustomTime input={order.createdAt.toLocaleString()}/></p>
+                          <p><strong>주문 내역: </strong>{order.orderItems[0].productName} 외 {order.orderItems.length - 1}건</p>
+                          <p><strong>주문 금액: </strong>{order.totalPrice.toLocaleString()}원</p>
+                          <p><strong>배송 상태: </strong> {
                               {
                                 UNKNOWN: "알 수 없음",
                                 CANCELLED: "취소",
