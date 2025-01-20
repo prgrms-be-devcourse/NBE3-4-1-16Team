@@ -1,28 +1,26 @@
 package team16.spring_project1.domain.product.product.Service;
 
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import team16.spring_project1.domain.product.product.DTO.ProductRequest;
+import team16.spring_project1.domain.product.product.Repository.ProductRepository;
+import team16.spring_project1.domain.product.product.entity.Product;
+import team16.spring_project1.global.enums.SearchKeywordType;
+import team16.spring_project1.standard.util.Ut;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 import static team16.spring_project1.global.configuration.AppConfig.getImagesFolder;
 import static team16.spring_project1.global.configuration.AppConfig.getStaticDirectory;
-
-import jakarta.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import team16.spring_project1.domain.product.product.Repository.ProductRepository;
-import team16.spring_project1.domain.product.product.entity.Product;
-import team16.spring_project1.domain.product.product.DTO.ProductRequest;
-
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -116,5 +114,27 @@ public class ProductService {
 
     public Optional<Product> findById(long id) {
         return productRepository.findById(id);
+    }
+
+    public Page<Product> findAll(int page, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
+
+        return productRepository.findAll(pageRequest);
+    }
+
+    public Page<Product> findByPaged(SearchKeywordType searchKeywordType, String searchKeyword, int page, int pageSize) {
+        if(Ut.str.isBlank(searchKeyword) || (searchKeywordType.equals("category") && searchKeyword.equals("전체"))) findAll(page, pageSize);
+
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize, Sort.by(Sort.Order.desc("id")));
+
+        return switch(searchKeywordType) {
+            case SearchKeywordType.category ->
+                    productRepository.findByCategory(searchKeyword, pageRequest);
+            default -> {
+                searchKeyword = "%" + searchKeyword + "%";
+
+                yield productRepository.findByProductNameLike(searchKeyword, pageRequest);
+            }
+        };
     }
 }

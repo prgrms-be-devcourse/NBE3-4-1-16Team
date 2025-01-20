@@ -70,6 +70,44 @@ public class BaseInitData {
                 11200,
                 "https://shop-phinf.pstatic.net/20241019_251/1729335546752dKz5H_JPEG/63468447768544782_588487658.jpg"
         );
+
+        Product product5 = productService.create(
+                "원두커피 베트남 로부스타 G1 1kg 커피창고 고소한 맛있는 홀빈 콩",
+                "커피콩",
+                14900,
+                "https://shop-phinf.pstatic.net/20240531_84/17171115333012Dsah_JPEG/118247422005482143_630751200.jpg"
+        );
+        Product product6 = productService.create(
+                "테라로사 올데이 블렌드 원두커피 1.13kg",
+                "커피콩",
+                36900,
+                "https://shopping-phinf.pstatic.net/main_1750344/17503448138.20190215162842.jpg"
+        );
+        Product product7 = productService.create(
+                "델몬트 미니 오렌지주스 레니니 미니병 250ml x 6병+스티커+크레이트 박스 코스트코",
+                "쥬스",
+                16790,
+                "https://shop-phinf.pstatic.net/20240905_278/1725547677124GObqy_JPEG/8555278738581166_93595970.jpg"
+        );
+        Product product8 = productService.create(
+                "돈시몬 오렌지주스 1L x 6병 착즙 100% 코스트코",
+                "쥬스",
+                19590,
+                "https://shop-phinf.pstatic.net/20241119_253/17319847041521qBfc_PNG/16941289197835218_1831856195.png"
+        );
+
+        Product product9 = productService.create(
+                "스타벅스 커클랜드 원두커피 하우스 블렌드 1.13kg",
+                "커피콩",
+                23860,
+                "https://shopping-phinf.pstatic.net/main_2461161/24611612527.1.20201027171504.jpg"
+        );
+        Product product10 = productService.create(
+                "산미높은 약배전원두 에티오피아 코케허니 예가체프G1 스페셜티 갓볶은 원두홀빈 200g [원산지:에티오피아]",
+                "커피콩",
+                11200,
+                "https://shop-phinf.pstatic.net/20241019_251/1729335546752dKz5H_JPEG/63468447768544782_588487658.jpg"
+        );
     }
 
     @Transactional

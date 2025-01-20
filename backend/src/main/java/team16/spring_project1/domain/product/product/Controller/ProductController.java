@@ -15,8 +15,9 @@ import team16.spring_project1.domain.product.product.DTO.ProductRequest;
 import team16.spring_project1.domain.product.product.Service.ProductService;
 import team16.spring_project1.domain.product.product.entity.Product;
 import team16.spring_project1.global.apiResponse.ApiResponse;
+import team16.spring_project1.global.enums.SearchKeywordType;
+import team16.spring_project1.standard.page.dto.PageDto;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 
@@ -38,18 +39,21 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.success("상품 등록에 성공했습니다."));
     }
 
-
     @Operation(summary = "Get All Products", description = "모든 상품 목록을 가져옵니다.")
     @GetMapping
     @Transactional(readOnly = true)
-    public ResponseEntity<ApiResponse<List<ProductDto>>> items() {
-        List<ProductDto> products = productService
-                .findAll()
-                .stream()
-                .map(ProductDto::new)
-                .toList();
-
-        return ResponseEntity.ok(ApiResponse.success(products));
+    public ResponseEntity<ApiResponse<PageDto<ProductDto>>> items(
+            @RequestParam(defaultValue = "productName") SearchKeywordType searchKeywordType,
+            @RequestParam(defaultValue = "") String searchKeyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "8") int pageSize
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(
+                new PageDto<>(
+                        productService.findByPaged(searchKeywordType, searchKeyword, page, pageSize)
+                                .map(ProductDto::new)
+                )
+        ));
     }
 
     @Operation(summary = "Get Product by ID", description = "상품 ID를 기준으로 특정 상품을 가져옵니다.")
