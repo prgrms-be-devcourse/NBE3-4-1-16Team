@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import team16.spring_project1.domain.product.product.DTO.ProductDto;
 import team16.spring_project1.domain.product.product.DTO.ProductRequest;
 import team16.spring_project1.domain.product.product.Repository.ProductRepository;
 import team16.spring_project1.domain.product.product.entity.Product;
@@ -18,33 +19,10 @@ import team16.spring_project1.standard.util.Ut;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static team16.spring_project1.global.configuration.AppConfig.getImagesFolder;
 import static team16.spring_project1.global.configuration.AppConfig.getStaticDirectory;
-
-
-import jakarta.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import team16.spring_project1.domain.product.product.DTO.ProductDto;
-import team16.spring_project1.domain.product.product.Repository.ProductRepository;
-import team16.spring_project1.domain.product.product.entity.Product;
-import team16.spring_project1.domain.product.product.DTO.ProductRequest;
-
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -162,9 +140,9 @@ public class ProductService {
 
     public Page<Product> findByPaged(SearchKeywordType searchKeywordType, String searchKeyword,
         int page, int pageSize) {
-        if (Ut.str.isBlank(searchKeyword) || (searchKeywordType.equals("category")
-            && searchKeyword.equals("전체")))
-            findAll(page, pageSize);
+        if (Ut.str.isBlank(searchKeyword) || (searchKeywordType == SearchKeywordType.category
+                && "전체".equals(searchKeyword)))
+            return findAll(page, pageSize);
 
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize,
             Sort.by(Sort.Order.desc("id")));
@@ -178,8 +156,6 @@ public class ProductService {
                 yield productRepository.findByProductNameLike(searchKeyword, pageRequest);
             }
         };
-
-
     }
 
     public List<ProductDto> findAllCategory() {

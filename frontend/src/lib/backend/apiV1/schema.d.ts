@@ -120,6 +120,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/products/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All Categories
+         * @description 모든 카테고리를 가져옵니다.
+         */
+        get: operations["categories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/order/{id}": {
         parameters: {
             query?: never;
@@ -380,6 +400,11 @@ export interface components {
             message?: string;
             content?: components["schemas"]["ProductDto"];
         };
+        ApiResponseListProductDto: {
+            success?: boolean;
+            message?: string;
+            content?: components["schemas"]["ProductDto"][];
+        };
         ApiResponseListOrderResponseDTO: {
             success?: boolean;
             message?: string;
@@ -531,7 +556,7 @@ export interface operations {
     items: {
         parameters: {
             query?: {
-                searchKeywordType?: "PRODUCT_NAME" | "CATEGORY";
+                searchKeywordType?: "productName" | "category";
                 searchKeyword?: string;
                 page?: number;
                 pageSize?: number;
@@ -680,6 +705,35 @@ export interface operations {
                 };
                 content: {
                     "application/json;charset=UTF-8": components["schemas"]["ApiResponseOrderResponseDTO"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseString"];
+                };
+            };
+        };
+    };
+    categories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json;charset=UTF-8": components["schemas"]["ApiResponseListProductDto"];
                 };
             };
             /** @description Not Found */

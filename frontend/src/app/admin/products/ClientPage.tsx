@@ -6,21 +6,51 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export default function ClientPage({
+  searchKeyword,
+  searchKeywordType,
+  page,
+  pageSize,
   responseBody,
 }: {
-  responseBody: components['schemas']['ApiResponseListProductDto']
+  searchKeyword: string
+  searchKeywordType: string
+  page: number
+  pageSize: number
+  responseBody: components['schemas']['ApiResponsePageDtoProductDto']
 }) {
   const router = useRouter()
 
   const YourComponent = ({ input }: { input: string }) => {
-      const parts = input.split(",")
-      const year = parseInt(parts[0].trim()+parts[1].trim())
-      const month = (parseInt(parts[2].trim())).toString().padStart(2, '0');
-      const day = parseInt(parts[3].trim()).toString().padStart(2, '0');
-      var hour = parseInt(parts[4].trim()) >=12 ? parseInt(parts[4].trim())-12 : parseInt(parts[4].trim());
-      var after = hour >= 12 ? "오후" : "오전";
-      const minute = parseInt(parts[5].trim())
-      return `${year}. ${month}. ${day}.   ${after} ${hour}:${minute}`
+    const parts = input.split(',')
+    const year = parseInt(parts[0].trim() + parts[1].trim())
+    const month = parseInt(parts[2].trim()).toString().padStart(2, '0')
+    const day = parseInt(parts[3].trim()).toString().padStart(2, '0')
+    var hour =
+      parseInt(parts[4].trim()) >= 12
+        ? parseInt(parts[4].trim()) - 12
+        : parseInt(parts[4].trim())
+    var after = hour >= 12 ? '오후' : '오전'
+    const minute = parseInt(parts[5].trim())
+    return `${year}. ${month}. ${day}.   ${after} ${hour}:${minute}`
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.target as HTMLFormElement)
+    const searchKeyword = formData.get('searchKeyword') as string
+
+    router.push(
+      `?page=1&searchKeywordType=productName&searchKeyword=${searchKeyword}`,
+    )
+  }
+
+  const handleOnchange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const searchKeyword = e.target.value
+
+    router.push(
+      `?page=1&searchKeywordType=category&searchKeyword=${searchKeyword}`,
+    )
   }
 
   const handleDelete = async (productId: number) => {
@@ -50,16 +80,39 @@ export default function ClientPage({
         <h2 className="text-5xl font-extrabold mt-20 mb-10 text-center">
           Products
         </h2>
-        <div className="flex justify-end">
+        <div className="flex justify-between">
+          <div className="flex">
+            <select
+              className="py-3 px-5 mr-3 block w-[200px] h-[50px] leading-[50px] border border-[#ddd] rounded-[8px]"
+              onChange={handleOnchange}
+            >
+              <option value="전체">전체</option>
+              <option value="커피콩">커피콩</option>
+              <option value="쥬스">쥬스</option>
+            </select>
+            <form className="flex" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="searchKeyword"
+                className="py-3 px-5 mr-3 block w-[250px] h-[50px] leading-[50px] border border-[#ddd] rounded-[8px]"
+              />
+              <button
+                type="submit"
+                className="h-[50px] leading-[50px] px-5 block bg-[#59473F] text-white rounded-[8px]"
+              >
+                검색
+              </button>
+            </form>
+          </div>
           <Link
             href="/admin/products/create"
-            className="py-3 px-5 block bg-[#59473F] text-white rounded-[8px]"
+            className="h-[50px] leading-[50px] px-5 block bg-[#59473F] text-white rounded-[8px] item-end"
           >
             제품 등록
           </Link>
         </div>
 
-        <table className="table-fixed bg-white mt-3">
+        <table className="table-fixed bg-white mt-3 shadow-[0_0_10px_0_rgba(0,0,0,0.1)]">
           <colgroup>
             <col className="w-[80px]" />
             <col className="w-[180px]" />
@@ -83,12 +136,17 @@ export default function ClientPage({
             </tr>
           </thead>
           <tbody>
-            {responseBody.content?.map((item, index) => (
+            {responseBody.content?.items.map((item, index) => (
               <tr
                 key={item.id}
                 className="border-b border-[#eee] bg-white text-center"
               >
-                <td className="px-3">{index + 1}</td>
+                <td className="px-3">
+                  {(responseBody.content?.totalItems || 0) -
+                    ((responseBody.content?.currentPageNumber || 1) - 1) *
+                      (responseBody.content?.pageSize || 10) -
+                    index}
+                </td>
                 <td>
                   <div className="w-[150px] h-[150px] p-3 inline-block">
                     <img
@@ -126,6 +184,25 @@ export default function ClientPage({
             ))}
           </tbody>
         </table>
+
+        <div className="flex my-5 gap-2 justify-center">
+          {Array.from(
+            { length: responseBody.content?.totalPages || 0 },
+            (_, i) => i + 1,
+          ).map((pageNum) => (
+            <Link
+              key={pageNum}
+              className={`px-3 py-1 border rounded shadow-[0_0_10px_0_rgba(0,0,0,0.1)] ${
+                pageNum === responseBody.content?.currentPageNumber
+                  ? 'bg-[#59473F] text-white'
+                  : 'bg-white'
+              }`}
+              href={`?page=${pageNum}`}
+            >
+              {pageNum}
+            </Link>
+          ))}
+        </div>
       </div>
     </>
   )

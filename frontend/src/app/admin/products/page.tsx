@@ -1,14 +1,45 @@
 import client from '@/lib/backend/client'
 import ClientPage from './ClientPage'
 
-export default async function Page() {
-  const response = await client.GET('/products')
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: {
+    searchKeywordType?: 'productName' | 'category'
+    searchKeyword?: string
+    pageSize?: number
+    page?: number
+  }
+}) {
+  const {
+    searchKeyword = '',
+    searchKeywordType = 'productName',
+    pageSize = 8,
+    page = 1,
+  } = await searchParams
+
+  const response = await client.GET('/products', {
+    params: {
+      query: {
+        searchKeyword,
+        searchKeywordType,
+        pageSize,
+        page,
+      },
+    },
+  })
 
   const responseBody = response.data!!
 
   return (
     <>
-      <ClientPage responseBody={responseBody} />
+      <ClientPage
+        searchKeyword={searchKeyword}
+        searchKeywordType={searchKeywordType}
+        page={page}
+        pageSize={pageSize}
+        responseBody={responseBody}
+      />
     </>
   )
 }

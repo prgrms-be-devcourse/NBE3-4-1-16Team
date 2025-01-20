@@ -208,6 +208,43 @@ public class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("상품 다건 조회 with searchKeywordType=category&searchKeyword=전체")
+    void t2_3() throws Exception {
+        ResultActions resultActions = mvc
+                .perform(get("/products?page=1&pageSize=8&searchKeywordType=category&searchKeyword=전체"))
+                .andDo(print());
+
+        Page<Product> productPage = productService
+                .findByPaged(SearchKeywordType.category, "전체", 1, 8);
+
+        resultActions
+                .andExpect(handler().handlerType(ProductController.class))
+                .andExpect(handler().methodName("items"))
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("요청이 성공했습니다."))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.totalItems").value(productPage.getTotalElements()))
+                .andExpect(jsonPath("$.content.totalPages").value(productPage.getTotalPages()))
+                .andExpect(jsonPath("$.content.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.content.pageSize").value(8));
+
+        List<Product> products = productPage.getContent();
+
+        for(int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+
+            resultActions
+                    .andExpect(jsonPath("$.content.items[%d].id".formatted(i)).value(product.getId()))
+                    .andExpect(jsonPath("$.content.items[%d].createDate".formatted(i)).exists())
+                    .andExpect(jsonPath("$.content.items[%d].modifyDate".formatted(i)).exists())
+                    .andExpect(jsonPath("$.content.items[%d].productName".formatted(i)).value(product.getProductName()))
+                    .andExpect(jsonPath("$.content.items[%d].price".formatted(i)).value(product.getPrice()))
+                    .andExpect(jsonPath("$.content.items[%d].imageUrl".formatted(i)).value(product.getImageUrl()))
+                    .andExpect(jsonPath("$.content.items[%d].category".formatted(i)).value(product.getCategory()));
+        }
+    }
+
+    @Test
     @DisplayName("상품 수정 성공")
     void t3_1() throws Exception {
         mvc.perform(put("/products/1")
