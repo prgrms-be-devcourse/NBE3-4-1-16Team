@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import team16.spring_project1.domain.member.Entity.Member;
+import team16.spring_project1.domain.member.Service.MemberService;
 import team16.spring_project1.domain.order.Entity.Order;
 import team16.spring_project1.domain.order.Entity.OrderItem;
 import team16.spring_project1.domain.order.Service.OrderService;
@@ -34,6 +36,9 @@ public class OrderControllerTest {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    MemberService memberService;
 
     @Autowired
     private MockMvc mvc;
@@ -326,6 +331,8 @@ public class OrderControllerTest {
     @Test
     @DisplayName("Put) 주문 상태 변경 성공")
     void t5_1() throws Exception {
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
 
         //무작위 주문을 추출
         //해당 주문의 상태를 다음 상태로 변경
@@ -338,7 +345,9 @@ public class OrderControllerTest {
         ResultActions resultActions = mvc
                 .perform(
                         put("/order/" + randomOrder.getId() + "/status")
-                                .param("status", newStatus.toString())
+                        .header("Authorization", "Bearer " + memberAuthToken)
+                        .param("status", newStatus.toString()
+                        )
                 ).andDo(print());
 
         //Response 검증
@@ -352,6 +361,8 @@ public class OrderControllerTest {
     @Test
     @DisplayName("Put) 주문 상태 변경 실패")
     void t5_2() throws Exception {
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
 
         //존재하지 않는 ID에 대해서는 t4-1에서 테스트한 바가 있음
         //따라서 존재하지 않는 상태에 대해서만 테스트
@@ -362,6 +373,7 @@ public class OrderControllerTest {
                 .perform(
                         put("/order/" + new Random(orderService.getAllOrders().size()) + "/status")
                                 .param("status", wrongStatus)
+                                .header("Authorization", "Bearer " + memberAuthToken)
                 ).andDo(print());
 
         //Response 검증
@@ -374,6 +386,8 @@ public class OrderControllerTest {
     @Test
     @DisplayName("Delete) 주문 삭제 성공")
     void t6_1() throws Exception {
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
 
         //랜덤한 주문 추출
         List<Order> orders = orderService.getAllOrders();
@@ -383,7 +397,8 @@ public class OrderControllerTest {
         //랜덤한 주문 삭제
         ResultActions resultActionsBefore = mvc
                 .perform(
-                        delete("/order/" + randomOrderId)
+                         delete("/order/" + randomOrderId)
+                        .header("Authorization", "Bearer " + memberAuthToken)
                 )
                 .andDo(print());
 
@@ -413,6 +428,8 @@ public class OrderControllerTest {
     @Test
     @DisplayName("Delete) 주문 삭제 실패")
     void t6_2() throws Exception {
+        Member member = memberService.findByUsername("admin").get();
+        String memberAuthToken = memberService.getAuthToken(member);
 
         //존재하지 않는 ID 설정
         Long notExistingId = (long)orderService.getAllOrders().size() + 1;
@@ -420,7 +437,8 @@ public class OrderControllerTest {
         //존재하지 않는 ID로 주문 삭제
         ResultActions resultActions = mvc
                 .perform(
-                        delete("/order/" + notExistingId)
+                         delete("/order/" + notExistingId)
+                        .header("Authorization", "Bearer " + memberAuthToken)
                 )
                 .andDo(print());
 
