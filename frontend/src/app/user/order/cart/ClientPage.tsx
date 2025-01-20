@@ -1,7 +1,7 @@
 'use client'
 
 import type {components} from '@/lib/backend/apiV1/schema';
-import React from 'react';
+    import React from 'react';
 // @ts-ignore
 import Cookies from 'js-cookie';
 import client from "@/lib/backend/client";

@@ -40,12 +40,6 @@ export default function RootLayout({
                     >
                         주문 내역
                     </Link>
-                    <Link
-                        href="/user/order/test"
-                        className="align-middle block text-lg text-gray-800 font-semibold"
-                    >
-                        테스트 데이터
-                    </Link>
                 </nav>
             </header>
 
