@@ -21,14 +21,19 @@ export default function ClientPage() {
                          'Content-Type': 'multipart/form-data',
                      },
                  });
-                 if (response.status === 200) {
-                     alert('이미지가 성공적으로 업로드되었습니다.');
-                     setImageUrl(`${baseDir}${response.data.message}`);
-                 } else {
-                     alert('이미지 업로드 실패했습니다.');
-                 }
+               if (response.status === 200) {
+                  if(response.data.success){
+                    alert(`이미지가 성공적으로 업로드되었습니다.`);
+                    setImageUrl(`${baseDir}${response.data.message}`);
+                  }
+                  else{
+                      alert('지원하지않는 파일 형식입니다.');
+                    }
+                } else {
+                    alert('이미지 업로드 실패했습니다.');
+                }
              } catch (error) {
-               alert('이미지 업로드 실패했습니다.', error);
+               alert('업로드 중 오류 발생:', error);
              }
          }
      };

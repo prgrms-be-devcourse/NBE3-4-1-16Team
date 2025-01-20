@@ -95,8 +95,7 @@ public class ProductController {
 
         Map<Boolean, String> response = productService.upload(file);
         if(response.containsKey(false))
-            throw  new NoSuchElementException(response.get(false));
-
+            return  ResponseEntity.ok(ApiResponse.failure(response.get(false)));
 
         return ResponseEntity.ok(ApiResponse.success(response.get(true)));
     }

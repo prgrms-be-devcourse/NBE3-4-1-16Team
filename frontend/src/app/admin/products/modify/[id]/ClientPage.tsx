@@ -28,8 +28,13 @@ export default function ClientPage({
                     },
                 });
                 if (response.status === 200) {
-                    alert('이미지가 성공적으로 업로드되었습니다.');
+                  if(response.data.success){
+                    alert(`이미지가 성공적으로 업로드되었습니다.`);
                     setImageUrl(`${baseDir}${response.data.message}`);
+                  }
+                  else{
+                      alert('지원하지않는 파일 형식입니다.');
+                    }
                 } else {
                     alert('이미지 업로드 실패했습니다.');
                 }
